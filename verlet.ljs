@@ -1,0 +1,281 @@
+
+extern print;
+
+struct Vec2d {
+    function void Vec2d(float x, float y) {
+        this->x = x;
+        this->y = y;
+    }
+
+    float x;
+    float y;
+}
+
+struct Point {
+    function void Point(float x, float y,
+                        float sizeX, float sizeY,
+                        float mass,
+                        int pinned) {
+        this->pos.x = x;
+        this->pos.y = y;
+        this->lastPos = this->pos;
+        this->size.x = sizeX;
+        this->size.y = sizeY;
+        this->mass = mass;
+        this->acc.x = 0;
+        this->acc.y = 0;
+        this->pinned = pinned;
+        this->debug = 0;
+    }
+
+    Vec2d pos;
+    Vec2d lastPos;
+    Vec2d size;
+    float mass;
+    Vec2d acc;
+    int pinned;
+    int debug;
+}
+
+struct Link {
+    function void Link(Point *p1, Point *p2,
+                       float distRest, float stiffness, float tearness) {
+        this->p1 = p1;
+        this->p2 = p2;
+        this->distRest = distRest;
+        this->stiffness = stiffness;
+        this->tearness = tearness;
+        this->disabled = 0;
+    }
+
+    Point *p1;
+    Point *p2;
+    float distRest;
+    float stiffness;
+    float tearness;
+    int disabled;
+}
+
+let int clothW = 190;
+let int clothH = 100;
+let int numPoints = 19000;
+let Point points[19000];
+
+let int numLinks = 37710;
+let int linkPtr = 0;
+let Link links[37710];
+
+let Vec2d lastMouse;
+let int mouseInfluenceSize = 20;
+let int mouseInfluenceScalar = 12;
+let int gravity = 500;
+let int leftOverTime = 0;
+
+function int min(int a, int b) {
+    if(a < b) {
+        return a;
+    }
+    return b;
+}
+
+function void update(int dt) {
+    let int steps = min((dt + leftOverTime) / 16, 5);
+    leftOverTime = dt - steps * 16;
+
+    for(let int i = 0; i<steps; i = i + 1) {
+        updateStep(float(16.0) / float(1000.0));
+    }
+}
+
+function void updateStep(float dt) {
+    for(let int z=0; z<3; z = z + 1) {
+        for(let int i=0; i<numLinks; i = i + 1) {
+            if(!links[i].disabled) {
+                solveLink(&links[i]);
+            }
+        }
+    }
+
+    for(let int i=0; i<numPoints; i = i + 1) {
+        updatePoint(&points[i], dt);
+    }
+}
+
+function int render() {
+    let float lines[2000000];
+    let int idx = 0;
+
+    for(let int i=0; i<numLinks; i = i + 1) {
+        if(!links[i].disabled) {
+            lines[idx] = links[i].p1->pos.x;
+            lines[idx + 1] = links[i].p1->pos.y;
+            lines[idx + 2] = links[i].p2->pos.x;
+            lines[idx + 3] = links[i].p2->pos.y;
+            idx = idx + 4;
+        }
+        else {
+            lines[idx] = 0.0;
+            lines[idx + 1] = 0.0;
+            lines[idx + 2] = 0.0;
+            lines[idx + 3] = 0.0;
+        }
+    }
+
+    lines[idx] = -1.0;
+    return int(lines);
+}
+
+function void mousemove(float x, float y, int rightClick) {
+    if(rightClick) {
+        for(let int i=0; i<numPoints; i = i + 1) {
+            if(points[i].pinned) {
+                continue;
+            }
+
+            let Vec2d pos = points[i].pos;
+            let Vec2d size = points[i].size;
+            
+            if(x > pos.x) {
+                if(x < pos.x + size.x) {
+                    if(y > pos.y) {
+                        if(y < pos.y + size.y) {
+                            for(let int j=0; j<numLinks; j = j + 1) {
+                                if(links[j].p1 == &points[i]) {
+                                    links[j].disabled = 1;
+                                }
+
+                                if(links[j].p2 == &points[i]) {
+                                    links[j].disabled = 1;
+                                }
+                            }                            
+                        }
+                    }
+                }
+            }
+        }        
+    }
+    else {
+        for(let int i=0; i<numPoints; i = i + 1) {
+            let Vec2d pos = points[i].pos;
+            let Vec2d line(pos.x - x, pos.y - y);
+            let float dist = sqrt(line.x * line.x + line.y * line.y);
+
+            if(dist < float(mouseInfluenceSize)) {
+                points[i].lastPos.x = (points[i].pos.x -
+                                       (x - lastMouse.x) * mouseInfluenceScalar);
+                points[i].lastPos.y = (points[i].pos.y -
+                                       (y - lastMouse.y) * mouseInfluenceScalar);
+            }
+        }
+    }
+
+    lastMouse.x = x;
+    lastMouse.y = y;
+}
+
+// Point implementation
+
+function void updatePoint(Point *p, float dt) {
+    let float dtSeq = dt * dt;
+    applyForce(p, 0, p->mass * gravity);
+
+    let float x = p->pos.x;
+    let float y = p->pos.y;
+    let float lx = p->lastPos.x;
+    let float ly = p->lastPos.y;
+
+    if(!p->pinned) {
+        p->lastPos = p->pos;
+
+        let Vec2d vel((x - lx) * .9, (y - ly) * .9);
+        p->pos.x = x + vel.x + p->acc.x * dtSeq;
+        p->pos.y = y + vel.y + p->acc.y * dtSeq;
+    }
+
+    p->acc.x = 0;
+    p->acc.y = 0;
+}
+
+function void applyForce(Point *p, float x, float y) {
+    p->acc.x = p->acc.x + x / p->mass;
+    p->acc.y = p->acc.y + y / p->mass;
+}
+
+// Link implementation
+
+function void solveLink(Link *link) {
+    let Point *p1 = link->p1;
+    let Point *p2 = link->p2;
+
+    let Vec2d diff(p1->pos.x - p2->pos.x,
+                   p1->pos.y - p2->pos.y);
+    let float d = sqrt(diff.x * diff.x + diff.y * diff.y);
+
+    if(d > link->tearness) {
+        //removeLink(link);
+    }
+
+    let float scalar = (link->distRest - d) / d;
+
+    let float im1 = 1.0 / p1->mass;
+    let float im2 = 1.0 / p2->mass;
+    let float scalarP1 = (im1 / (im1 + im2)) * link->stiffness;
+    let float scalarP2 = link->stiffness - scalarP1;
+
+    if(!p1->pinned) {
+        p1->pos.x = p1->pos.x + diff.x * scalarP1 * scalar;
+        p1->pos.y = p1->pos.y + diff.y * scalarP1 * scalar;
+    }
+
+    if(!p2->pinned) {
+        p2->pos.x = p2->pos.x - diff.x * scalarP2 * scalar;
+        p2->pos.y = p2->pos.y - diff.y * scalarP2 * scalar;
+    }
+}
+
+function void removeLink(Link *link) {
+}
+
+// Init
+
+function void main(int width) {
+    let float restingDistance = 3.0;
+    let float tearSensitivity = 30;
+    let int minWidth = width / 2 - int((clothW * restingDistance) / 2);
+    let int minHeight = 25;
+
+    lastMouse.x = 0;
+    lastMouse.y = 0;
+
+    for(let int y=0; y<clothH; y = y + 1) {
+        for(let int x=0; x<clothW; x = x + 1) {
+            let Point p(
+                minWidth + x * restingDistance,
+                minHeight + y * restingDistance,
+                3, 3,
+                1, y == 0
+            );
+            let int index = y*clothW + x;
+            points[index] = p;
+
+            if(x > 0) {
+                let Link l(&points[index], &points[index - 1],
+                           restingDistance, 1, tearSensitivity);
+                links[linkPtr] = l;
+                linkPtr = linkPtr + 1;
+            }
+
+            if(y > 0) {
+                let Link l(&points[index],
+                           &points[(y - 1) * clothW + x],
+                           restingDistance,
+                           1,
+                           tearSensitivity);
+                links[linkPtr] = l;
+                linkPtr = linkPtr + 1;
+            }
+        }
+    }
+
+    print(linkPtr);
+}
