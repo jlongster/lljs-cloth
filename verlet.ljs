@@ -114,6 +114,12 @@ function int render() {
             lines[idx + 3] = links[i].p2->pos.y;
             idx = idx + 4;
         }
+        else {
+            lines[idx] = 0.0;
+            lines[idx + 1] = 0.0;
+            lines[idx + 2] = 0.0;
+            lines[idx + 3] = 0.0;
+        }
     }
 
     lines[idx] = -1.0;

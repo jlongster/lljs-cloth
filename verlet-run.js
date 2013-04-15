@@ -11,12 +11,12 @@ var requestAnimFrame = (function(){
 
 document.addEventListener('DOMContentLoaded', function() {
     canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
     canvas.width = 500;
     canvas.height = 700;
 
     document.body.appendChild(canvas);
 
+    var renderer = new Renderer(canvas);
     var prevMouse = null;
     var running = false;
     var lastTime, rightClick;
@@ -95,25 +95,30 @@ document.addEventListener('DOMContentLoaded', function() {
         window.verlet.update(dt);
 
         // render
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // ctx.fillStyle = 'black';
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // while(1) {
+        //     ctx.strokeStyle = 'rgb(200, 210, 200)';
+
+        //     if(F4[ptr] === -1) {
+        //         break;
+        //     }
+            
+        //     ctx.beginPath();
+        //     ctx.moveTo(F4[ptr], F4[ptr + 1]);
+        //     ctx.lineTo(F4[ptr + 2], F4[ptr + 3]);
+        //     ctx.closePath();
+        //     ctx.stroke();
+
+        //     ptr += 4;
+        // }
 
         var ptr = window.verlet.render();
-        while(1) {
-            ctx.strokeStyle = 'rgb(200, 210, 200)';
+        var length = 13830 * 2 * 2 * 4; // numLinks * 2 points * 2 floats * 4 bytes;
 
-            if(F4[ptr] === -1) {
-                break;
-            }
-            
-            ctx.beginPath();
-            ctx.moveTo(F4[ptr], F4[ptr + 1]);
-            ctx.lineTo(F4[ptr + 2], F4[ptr + 3]);
-            ctx.closePath();
-            ctx.stroke();
-
-            ptr += 4;
-        }
+        var points = new Float32Array(window.asmBuffer.slice(ptr, ptr + length));
+        renderer.render(points);
 
         requestAnimFrame(heartbeat);
     }
