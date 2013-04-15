@@ -44,11 +44,11 @@ var asm = (function (global, env, buffer) {
     var pow = global.Math.pow;
     var imul = global.Math.imul;
 
-var globalSP = 667992;
-var clothW = 70;
+var globalSP = 1817112;
+var clothW = 190;
 var clothH = 100;
-var numPoints = 7000;
-var numLinks = 13830;
+var numPoints = 19000;
+var numLinks = 37710;
 var linkPtr = 0;
 var mouseInfluenceSize = 20;
 var mouseInfluenceScalar = 12;
@@ -118,10 +118,10 @@ function update(dt) {
 function updateStep(dt) {
   dt = +dt;
   var z = 0, i = 0, i$1 = 0, $SP = 0;
-  for (z = 0; (z | 0) < 15; z = (z | 0) + 1 | 0) {
+  for (z = 0; (z | 0) < 3; z = (z | 0) + 1 | 0) {
     for (i = 0; (i | 0) < (numLinks | 0); i = (i | 0) + 1 | 0) {
-      if (!(I4[(((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
-        solveLink((((totalSize - globalSP | 0) + 336064 | 0) + i * 24) | 0);
+      if (!(I4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
+        solveLink((((totalSize - globalSP | 0) + 912064 | 0) + i * 24) | 0);
       }
     }
   }
@@ -135,11 +135,11 @@ function render() {
   $SP = U4[1] | 0;
   idx = 0;
   for (i = 0; (i | 0) < (numLinks | 0); i = (i | 0) + 1 | 0) {
-    if (!(I4[(((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
-      F4[(($SP) + idx * 4) >> 2] = +F4[((U4[((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) >> 2] | 0)) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 1 | 0 | 0) * 4) >> 2] = +F4[(((U4[((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) >> 2] | 0)) + 4 | 0) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 2 | 0 | 0) * 4) >> 2] = +F4[((U4[(((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 3 | 0 | 0) * 4) >> 2] = +F4[(((U4[(((((totalSize - globalSP | 0) + 336064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) + 4 | 0) >> 2];
+    if (!(I4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
+      F4[(($SP) + idx * 4) >> 2] = +F4[((U4[((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) >> 2] | 0)) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 1 | 0 | 0) * 4) >> 2] = +F4[(((U4[((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) >> 2] | 0)) + 4 | 0) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 2 | 0 | 0) * 4) >> 2] = +F4[((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 3 | 0 | 0) * 4) >> 2] = +F4[(((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) + 4 | 0) >> 2];
       idx = (idx | 0) + 4 | 0;
     } else {
       F4[(($SP) + idx * 4) >> 2] = +0;
@@ -171,11 +171,11 @@ function mousemove(x, y, rightClick) {
           if (+y > +(+F4[((($SP)) + 4 | 0) >> 2])) {
             if (+y < +(+(+F4[((($SP)) + 4 | 0) >> 2]) + +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]))) {
               for (j = 0; (j | 0) < (numLinks | 0); j = (j | 0) + 1 | 0) {
-                if ((U4[((((totalSize - globalSP | 0) + 336064 | 0) + j * 24)) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
-                  I4[(((((totalSize - globalSP | 0) + 336064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
+                if ((U4[((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
+                  I4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
                 }
-                if ((U4[(((((totalSize - globalSP | 0) + 336064 | 0) + j * 24)) + 4 | 0) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
-                  I4[(((((totalSize - globalSP | 0) + 336064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
+                if ((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 4 | 0) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
+                  I4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
                 }
               }
             }
@@ -189,13 +189,13 @@ function mousemove(x, y, rightClick) {
       (Vec2d$Vec2d(($SP) + 24 | 0 | 0, +(+(+F4[(($SP) + 16 | 0) >> 2]) - +x), +(+(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]) - +y)), F4[(($SP) + 24 | 0) >> 2]);
       dist = sqrt(+(+(+F4[(($SP) + 24 | 0) >> 2]) * +(+F4[(($SP) + 24 | 0) >> 2]) + +(+F4[((($SP) + 24 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 24 | 0) + 4 | 0) >> 2])));
       if (+dist < +(+(mouseInfluenceSize | 0))) {
-        F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) >> 2] = +(+(+F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) >> 2]) - (+x - +(+F4[((totalSize - globalSP | 0) + 667984 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
-        F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) + 4 | 0) >> 2] = +(+(+F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) + 4 | 0) >> 2]) - (+y - +(+F4[(((totalSize - globalSP | 0) + 667984 | 0) + 4 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
+        F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) >> 2] = +(+(+F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) >> 2]) - (+x - +(+F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
+        F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) + 4 | 0) >> 2] = +(+(+F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) + 4 | 0) >> 2]) - (+y - +(+F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
       }
     }
   }
-  F4[((totalSize - globalSP | 0) + 667984 | 0) >> 2] = x;
-  F4[(((totalSize - globalSP | 0) + 667984 | 0) + 4 | 0) >> 2] = y;
+  F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2] = x;
+  F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2] = y;
   U4[1] = (U4[1] | 0) + 32;
   return 0.0;
 }
@@ -267,16 +267,16 @@ function removeLink(link) {
 function main(width) {
   width = width | 0;
   var restingDistance = 0.0, tearSensitivity = 0.0, minWidth = 0, minHeight = 0, y = 0, x = 0, p = 0, index = 0, l = 0, l$1 = 0, $SP = 0;
-  U4[1] = totalSize - 667992;
+  U4[1] = totalSize - 1817112;
   U4[0] = 4;
   U4[1] = (U4[1] | 0) - 96;
   $SP = U4[1] | 0;
-  restingDistance = +6.0;
+  restingDistance = +3.0;
   tearSensitivity = +30.0;
   minWidth = ((width | 0 | 0) / 2 | 0 | 0 | 0 | 0) - (~~(+(clothW | 0) * +restingDistance / +2) | 0 | 0) | 0 | 0;
   minHeight = 25;
-  F4[((totalSize - globalSP | 0) + 667984 | 0) >> 2] = +0;
-  F4[(((totalSize - globalSP | 0) + 667984 | 0) + 4 | 0) >> 2] = +0;
+  F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2] = +0;
+  F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2] = +0;
   for (y = 0; (y | 0) < (clothH | 0); y = (y | 0) + 1 | 0) {
     for (x = 0; (x | 0) < (clothW | 0); x = (x | 0) + 1 | 0) {
       (Point$Point(($SP) | 0 | 0, +(+(minWidth | 0) + +(x | 0) * +restingDistance), +(+(minHeight | 0) + +(y | 0) * +restingDistance), +3, +3, +1, (y | 0 | 0) == 0), F4[($SP) >> 2]);
@@ -284,12 +284,12 @@ function main(width) {
       memcpy((((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0, ($SP) | 0, 48);
       if ((x | 0) > 0) {
         (Link$Link(($SP) + 48 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((index | 0 | 0 | 0) - 1 | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 48 | 0) >> 2]);
-        memcpy((((totalSize - globalSP | 0) + 336064 | 0) + linkPtr * 24) | 0, ($SP) + 48 | 0, 24);
+        memcpy((((totalSize - globalSP | 0) + 912064 | 0) + linkPtr * 24) | 0, ($SP) + 48 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
       if ((y | 0) > 0) {
         (Link$Link(($SP) + 72 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((imul((y | 0 | 0 | 0) - 1 | 0 | 0 | 0, clothW | 0) | 0 | 0 | 0) + (x | 0 | 0 | 0) | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 72 | 0) >> 2]);
-        memcpy((((totalSize - globalSP | 0) + 336064 | 0) + linkPtr * 24) | 0, ($SP) + 72 | 0, 24);
+        memcpy((((totalSize - globalSP | 0) + 912064 | 0) + linkPtr * 24) | 0, ($SP) + 72 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
     }

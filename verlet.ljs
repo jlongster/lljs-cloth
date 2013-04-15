@@ -56,21 +56,20 @@ struct Link {
     int disabled;
 }
 
-let int clothW = 70;
+let int clothW = 190;
 let int clothH = 100;
-let int numPoints = 7000;
-let Point points[7000];
+let int numPoints = 19000;
+let Point points[19000];
 
-let int numLinks = 13830;
+let int numLinks = 37710;
 let int linkPtr = 0;
-let Link links[13830];
+let Link links[37710];
 
 let Vec2d lastMouse;
 let int mouseInfluenceSize = 20;
 let int mouseInfluenceScalar = 12;
 let int gravity = 500;
 let int leftOverTime = 0;
-
 
 function int min(int a, int b) {
     if(a < b) {
@@ -89,7 +88,7 @@ function void update(int dt) {
 }
 
 function void updateStep(float dt) {
-    for(let int z=0; z<15; z = z + 1) {
+    for(let int z=0; z<3; z = z + 1) {
         for(let int i=0; i<numLinks; i = i + 1) {
             if(!links[i].disabled) {
                 solveLink(&links[i]);
@@ -240,7 +239,7 @@ function void removeLink(Link *link) {
 // Init
 
 function void main(int width) {
-    let float restingDistance = 6.0;
+    let float restingDistance = 3.0;
     let float tearSensitivity = 30;
     let int minWidth = width / 2 - int((clothW * restingDistance) / 2);
     let int minHeight = 25;

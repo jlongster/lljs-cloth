@@ -11,7 +11,7 @@ var requestAnimFrame = (function(){
 
 document.addEventListener('DOMContentLoaded', function() {
     canvas = document.createElement('canvas');
-    canvas.width = 500;
+    canvas.width = 900;
     canvas.height = 700;
 
     document.body.appendChild(canvas);
@@ -95,27 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.verlet.update(dt);
 
         // render
-        // ctx.fillStyle = 'black';
-        // ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // while(1) {
-        //     ctx.strokeStyle = 'rgb(200, 210, 200)';
-
-        //     if(F4[ptr] === -1) {
-        //         break;
-        //     }
-            
-        //     ctx.beginPath();
-        //     ctx.moveTo(F4[ptr], F4[ptr + 1]);
-        //     ctx.lineTo(F4[ptr + 2], F4[ptr + 3]);
-        //     ctx.closePath();
-        //     ctx.stroke();
-
-        //     ptr += 4;
-        // }
 
         var ptr = window.verlet.render();
-        var length = 13830 * 2 * 2 * 4; // numLinks * 2 points * 2 floats * 4 bytes;
+        var length = 37710 * 2 * 2 * 4; // numLinks * 2 points * 2 floats * 4 bytes;
 
         var points = new Float32Array(window.asmBuffer.slice(ptr, ptr + length));
         renderer.render(points);
@@ -137,5 +119,5 @@ function currentTime() {
 }
 
 function print() {
-    console.log.apply(this, arguments);
+    //console.log.apply(this, arguments);
 }
