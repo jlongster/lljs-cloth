@@ -8,7 +8,11 @@ var MB = 1024 * 1024;
 var SIZE = 256 * MB;
 var STACK_SIZE = 2 * MB;
 var HEAP_SIZE = SIZE - STACK_SIZE;
-var buffer = window.asmBuffer = new ArrayBuffer(SIZE);
+var buffer = new ArrayBuffer(SIZE);
+
+if(typeof window !== 'undefined') {
+    window.asmBuffer = buffer;
+}
 
 var asm = (function (global, env, buffer) {
     "use asm";
@@ -120,26 +124,26 @@ function updateStep(dt) {
   var z = 0, i = 0, i$1 = 0, $SP = 0;
   for (z = 0; (z | 0) < 3; z = (z | 0) + 1 | 0) {
     for (i = 0; (i | 0) < (numLinks | 0); i = (i | 0) + 1 | 0) {
-      if (!(I4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
-        solveLink((((totalSize - globalSP | 0) + 912064 | 0) + i * 24) | 0);
+      if (!(I4[((((totalSize - globalSP | 0) + 912064 + i * 24)) + 20 | 0) >> 2] | 0)) {
+        solveLink(((totalSize - globalSP | 0) + 912064 + i * 24) | 0);
       }
     }
   }
   for (i$1 = 0; (i$1 | 0) < (numPoints | 0); i$1 = (i$1 | 0) + 1 | 0) {
-    updatePoint((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48) | 0, dt);
+    updatePoint(((totalSize - globalSP | 0) + 64 + i$1 * 48) | 0, dt);
   }
 }
 function render() {
   var _ = 0, lines = 0, idx = 0, i = 0, $SP = 0;
-  U4[1] = (U4[1] | 0) - 8000000;
-  $SP = U4[1] | 0;
+  U4[1] = ~~U4[1] - 8000000;
+  $SP = ~~U4[1];
   idx = 0;
   for (i = 0; (i | 0) < (numLinks | 0); i = (i | 0) + 1 | 0) {
-    if (!(I4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
-      F4[(($SP) + idx * 4) >> 2] = +F4[((U4[((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) >> 2] | 0)) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 1 | 0 | 0) * 4) >> 2] = +F4[(((U4[((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) >> 2] | 0)) + 4 | 0) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 2 | 0 | 0) * 4) >> 2] = +F4[((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) >> 2];
-      F4[(($SP) + ((idx | 0 | 0) + 3 | 0 | 0) * 4) >> 2] = +F4[(((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + i * 24)) + 4 | 0) >> 2] | 0)) + 4 | 0) >> 2];
+    if (!(I4[((((totalSize - globalSP | 0) + 912064 + i * 24)) + 20 | 0) >> 2] | 0)) {
+      F4[(($SP) + idx * 4) >> 2] = +F4[((~~U4[(((totalSize - globalSP | 0) + 912064 + i * 24)) >> 2])) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 1 | 0 | 0) * 4) >> 2] = +F4[(((~~U4[(((totalSize - globalSP | 0) + 912064 + i * 24)) >> 2])) + 4 | 0) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 2 | 0 | 0) * 4) >> 2] = +F4[((~~U4[((((totalSize - globalSP | 0) + 912064 + i * 24)) + 4 | 0) >> 2])) >> 2];
+      F4[(($SP) + ((idx | 0 | 0) + 3 | 0 | 0) * 4) >> 2] = +F4[(((~~U4[((((totalSize - globalSP | 0) + 912064 + i * 24)) + 4 | 0) >> 2])) + 4 | 0) >> 2];
       idx = (idx | 0) + 4 | 0;
     } else {
       F4[(($SP) + idx * 4) >> 2] = +0;
@@ -149,33 +153,34 @@ function render() {
     }
   }
   F4[(($SP) + idx * 4) >> 2] = +(-1 | 0);
-  U4[1] = (U4[1] | 0) + 8000000;
-  return $SP | 0;
+  return ~~(_ = ~~($SP) >>> 0, U4[1] = ~~(~~U4[1] + 8000000), _);
+  U4[1] = ~~U4[1] + 8000000;
+  return 0;
 }
 function mousemove(x, y, rightClick) {
   x = +x;
   y = +y;
   rightClick = rightClick | 0;
   var i = 0, pos = 0, size = 0, j = 0, i$1 = 0, pos$1 = 0, line = 0, dist = 0.0, $SP = 0;
-  U4[1] = (U4[1] | 0) - 32;
-  $SP = U4[1] | 0;
+  U4[1] = ~~U4[1] - 32;
+  $SP = ~~U4[1];
   if (rightClick) {
     for (i = 0; (i | 0) < (numPoints | 0); i = (i | 0) + 1 | 0) {
-      if (I4[(((((totalSize - globalSP | 0) + 64 | 0) + i * 48)) + 40 | 0) >> 2] | 0) {
+      if (I4[((((totalSize - globalSP | 0) + 64 + i * 48)) + 40 | 0) >> 2] | 0) {
         continue;
       }
-      memcpy(($SP) | 0, ((((totalSize - globalSP | 0) + 64 | 0) + i * 48)) | 0, 8);
-      memcpy(($SP) + 8 | 0, ((((totalSize - globalSP | 0) + 64 | 0) + i * 48)) + 16 | 0, 8);
+      memcpy(($SP) | 0, (((totalSize - globalSP | 0) + 64 + i * 48)) | 0, 8);
+      memcpy(($SP) + 8 | 0, (((totalSize - globalSP | 0) + 64 + i * 48)) + 16 | 0, 8);
       if (+x > +(+F4[(($SP)) >> 2])) {
         if (+x < +(+(+F4[(($SP)) >> 2]) + +(+F4[(($SP) + 8 | 0) >> 2]))) {
           if (+y > +(+F4[((($SP)) + 4 | 0) >> 2])) {
             if (+y < +(+(+F4[((($SP)) + 4 | 0) >> 2]) + +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]))) {
               for (j = 0; (j | 0) < (numLinks | 0); j = (j | 0) + 1 | 0) {
-                if ((U4[((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
-                  I4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
+                if (~~U4[(((totalSize - globalSP | 0) + 912064 + j * 24)) >> 2] == (((totalSize - globalSP | 0) + 64 + i * 48) | 0)) {
+                  I4[((((totalSize - globalSP | 0) + 912064 + j * 24)) + 20 | 0) >> 2] = 1;
                 }
-                if ((U4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 4 | 0) >> 2] | 0) == ((((totalSize - globalSP | 0) + 64 | 0) + i * 48) | 0)) {
-                  I4[(((((totalSize - globalSP | 0) + 912064 | 0) + j * 24)) + 20 | 0) >> 2] = 1;
+                if (~~U4[((((totalSize - globalSP | 0) + 912064 + j * 24)) + 4 | 0) >> 2] == (((totalSize - globalSP | 0) + 64 + i * 48) | 0)) {
+                  I4[((((totalSize - globalSP | 0) + 912064 + j * 24)) + 20 | 0) >> 2] = 1;
                 }
               }
             }
@@ -185,18 +190,18 @@ function mousemove(x, y, rightClick) {
     }
   } else {
     for (i$1 = 0; (i$1 | 0) < (numPoints | 0); i$1 = (i$1 | 0) + 1 | 0) {
-      memcpy(($SP) + 16 | 0, ((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) | 0, 8);
+      memcpy(($SP) + 16 | 0, (((totalSize - globalSP | 0) + 64 + i$1 * 48)) | 0, 8);
       (Vec2d$Vec2d(($SP) + 24 | 0 | 0, +(+(+F4[(($SP) + 16 | 0) >> 2]) - +x), +(+(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]) - +y)), F4[(($SP) + 24 | 0) >> 2]);
       dist = sqrt(+(+(+F4[(($SP) + 24 | 0) >> 2]) * +(+F4[(($SP) + 24 | 0) >> 2]) + +(+F4[((($SP) + 24 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 24 | 0) + 4 | 0) >> 2])));
       if (+dist < +(+(mouseInfluenceSize | 0))) {
-        F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) >> 2] = +(+(+F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) >> 2]) - (+x - +(+F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
-        F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48)) + 8 | 0) + 4 | 0) >> 2] = +(+(+F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 48))) + 4 | 0) >> 2]) - (+y - +(+F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
+        F4[((((totalSize - globalSP | 0) + 64 + i$1 * 48)) + 8 | 0) >> 2] = +(+(+F4[((((totalSize - globalSP | 0) + 64 + i$1 * 48))) >> 2]) - (+x - +(+F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
+        F4[(((((totalSize - globalSP | 0) + 64 + i$1 * 48)) + 8 | 0) + 4 | 0) >> 2] = +(+(+F4[(((((totalSize - globalSP | 0) + 64 + i$1 * 48))) + 4 | 0) >> 2]) - (+y - +(+F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2])) * +(mouseInfluenceScalar | 0));
       }
     }
   }
   F4[((totalSize - globalSP | 0) + 1817104 | 0) >> 2] = x;
   F4[(((totalSize - globalSP | 0) + 1817104 | 0) + 4 | 0) >> 2] = y;
-  U4[1] = (U4[1] | 0) + 32;
+  U4[1] = ~~U4[1] + 32;
   return 0.0;
 }
 // Point implementation
@@ -204,8 +209,8 @@ function updatePoint(p, dt) {
   p = p | 0;
   dt = +dt;
   var dtSeq = 0.0, x = 0.0, y = 0.0, lx = 0.0, ly = 0.0, vel = 0, $SP = 0;
-  U4[1] = (U4[1] | 0) - 8;
-  $SP = U4[1] | 0;
+  U4[1] = ~~U4[1] - 8;
+  $SP = ~~U4[1];
   dtSeq = +(+dt * +dt);
   applyForce(p | 0, +0, +(+(+F4[((p) + 24 | 0) >> 2]) * +(gravity | 0)));
   x = +F4[((p)) >> 2];
@@ -220,7 +225,7 @@ function updatePoint(p, dt) {
   }
   F4[((p) + 32 | 0) >> 2] = +0;
   F4[(((p) + 32 | 0) + 4 | 0) >> 2] = +0;
-  U4[1] = (U4[1] | 0) + 8;
+  U4[1] = ~~U4[1] + 8;
   return 0.0;
 }
 function applyForce(p, x, y) {
@@ -235,10 +240,10 @@ function applyForce(p, x, y) {
 function solveLink(link) {
   link = link | 0;
   var p1 = 0, p2 = 0, diff = 0, d = 0.0, scalar = 0.0, im1 = 0.0, im2 = 0.0, scalarP1 = 0.0, scalarP2 = 0.0, $SP = 0;
-  U4[1] = (U4[1] | 0) - 8;
-  $SP = U4[1] | 0;
-  p1 = U4[(link) >> 2] | 0 | 0;
-  p2 = U4[((link) + 4 | 0) >> 2] | 0 | 0;
+  U4[1] = ~~U4[1] - 8;
+  $SP = ~~U4[1];
+  p1 = ~~U4[(link) >> 2] | 0;
+  p2 = ~~U4[((link) + 4 | 0) >> 2] | 0;
   (Vec2d$Vec2d(($SP) | 0 | 0, +(+(+F4[((p1)) >> 2]) - +(+F4[((p2)) >> 2])), +(+(+F4[(((p1)) + 4 | 0) >> 2]) - +(+F4[(((p2)) + 4 | 0) >> 2]))), F4[($SP) >> 2]);
   d = sqrt(+(+(+F4[(($SP)) >> 2]) * +(+F4[(($SP)) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2])));
   if (+d > +(+F4[((link) + 16 | 0) >> 2])) {
@@ -256,7 +261,7 @@ function solveLink(link) {
     F4[((p2)) >> 2] = +(+(+F4[((p2)) >> 2]) - +(+F4[(($SP)) >> 2]) * +scalarP2 * +scalar);
     F4[(((p2)) + 4 | 0) >> 2] = +(+(+F4[(((p2)) + 4 | 0) >> 2]) - +(+F4[((($SP)) + 4 | 0) >> 2]) * +scalarP2 * +scalar);
   }
-  U4[1] = (U4[1] | 0) + 8;
+  U4[1] = ~~U4[1] + 8;
   return 0.0;
 }
 function removeLink(link) {
@@ -269,8 +274,8 @@ function main(width) {
   var restingDistance = 0.0, tearSensitivity = 0.0, minWidth = 0, minHeight = 0, y = 0, x = 0, p = 0, index = 0, l = 0, l$1 = 0, $SP = 0;
   U4[1] = totalSize - 1817112;
   U4[0] = 4;
-  U4[1] = (U4[1] | 0) - 96;
-  $SP = U4[1] | 0;
+  U4[1] = ~~U4[1] - 96;
+  $SP = ~~U4[1];
   restingDistance = +3.0;
   tearSensitivity = +30.0;
   minWidth = ((width | 0 | 0) / 2 | 0 | 0 | 0 | 0) - (~~(+(clothW | 0) * +restingDistance / +2) | 0 | 0) | 0 | 0;
@@ -281,21 +286,21 @@ function main(width) {
     for (x = 0; (x | 0) < (clothW | 0); x = (x | 0) + 1 | 0) {
       (Point$Point(($SP) | 0 | 0, +(+(minWidth | 0) + +(x | 0) * +restingDistance), +(+(minHeight | 0) + +(y | 0) * +restingDistance), +3, +3, +1, (y | 0 | 0) == 0), F4[($SP) >> 2]);
       index = (imul(y | 0, clothW | 0) | 0 | 0) + (x | 0 | 0) | 0 | 0;
-      memcpy((((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0, ($SP) | 0, 48);
+      memcpy(((totalSize - globalSP | 0) + 64 + index * 48) | 0, ($SP) | 0, 48);
       if ((x | 0) > 0) {
-        (Link$Link(($SP) + 48 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((index | 0 | 0 | 0) - 1 | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 48 | 0) >> 2]);
-        memcpy((((totalSize - globalSP | 0) + 912064 | 0) + linkPtr * 24) | 0, ($SP) + 48 | 0, 24);
+        (Link$Link(($SP) + 48 | 0 | 0, ((totalSize - globalSP | 0) + 64 + index * 48) | 0 | 0, ((totalSize - globalSP | 0) + 64 + ((index | 0 | 0 | 0) - 1 | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 48 | 0) >> 2]);
+        memcpy(((totalSize - globalSP | 0) + 912064 + linkPtr * 24) | 0, ($SP) + 48 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
       if ((y | 0) > 0) {
-        (Link$Link(($SP) + 72 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 48) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((imul((y | 0 | 0 | 0) - 1 | 0 | 0 | 0, clothW | 0) | 0 | 0 | 0) + (x | 0 | 0 | 0) | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 72 | 0) >> 2]);
-        memcpy((((totalSize - globalSP | 0) + 912064 | 0) + linkPtr * 24) | 0, ($SP) + 72 | 0, 24);
+        (Link$Link(($SP) + 72 | 0 | 0, ((totalSize - globalSP | 0) + 64 + index * 48) | 0 | 0, ((totalSize - globalSP | 0) + 64 + ((imul((y | 0 | 0 | 0) - 1 | 0 | 0 | 0, clothW | 0) | 0 | 0 | 0) + (x | 0 | 0 | 0) | 0 | 0 | 0) * 48) | 0 | 0, restingDistance, +1, tearSensitivity), U4[(($SP) + 72 | 0) >> 2]);
+        memcpy(((totalSize - globalSP | 0) + 912064 + linkPtr * 24) | 0, ($SP) + 72 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
     }
   }
   print(linkPtr | 0);
-  U4[1] = (U4[1] | 0) + 96;
+  U4[1] = ~~U4[1] + 96;
   return 0.0;
 }
     function memcpy(dest, src, num) {

@@ -101,7 +101,7 @@ function void updateStep(float dt) {
     }
 }
 
-function int render() {
+function uint render() {
     let float lines[2000000];
     let int idx = 0;
 

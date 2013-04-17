@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         running = false;
     }
 
+    var count = 0;
     function heartbeat() {
         if(!running) {
             return;
@@ -102,7 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var points = new Float32Array(window.asmBuffer.slice(ptr, ptr + length));
         renderer.render(points);
 
-        requestAnimFrame(heartbeat);
+        if(count < 100) {
+            requestAnimFrame(heartbeat);
+            count++;
+        }
     }
 
     window.verlet.main(canvas.width);
