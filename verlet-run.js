@@ -98,15 +98,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // render
 
         var ptr = window.verlet.render();
-        var length = 37710 * 2 * 2 * 4; // numLinks * 2 points * 2 floats * 4 bytes;
+        var length = 37710 * 2 * 2; // numLinks * 2 points * 2 floats * 4 bytes;
 
-        var points = new Float32Array(window.asmBuffer.slice(ptr, ptr + length));
+        var points = F4.subarray(ptr >> 2, (ptr >> 2) + length);
         renderer.render(points);
 
-        if(count < 100) {
-            requestAnimFrame(heartbeat);
-            count++;
-        }
+        requestAnimFrame(heartbeat);
+        count++;
     }
 
     window.verlet.main(canvas.width);
@@ -123,5 +121,5 @@ function currentTime() {
 }
 
 function print() {
-    //console.log.apply(this, arguments);
+    console.log.apply(this, arguments);
 }
