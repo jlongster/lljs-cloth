@@ -56,19 +56,19 @@ struct Link {
     int disabled;
 }
 
-let int clothW = 190;
-let int clothH = 100;
-let int numPoints = 19000;
-let Point points[19000];
+let int clothW = 220;
+let int clothH = 70;
+let int numPoints = 15400;
+let Point points[15400];
 
-let int numLinks = 37710;
+let int numLinks = 30510;
 let int linkPtr = 0;
-let Link links[37710];
+let Link links[30510];
 
 let Vec2d lastMouse;
-let int mouseInfluenceSize = 20;
-let int mouseInfluenceScalar = 12;
-let int gravity = 500;
+let int mouseInfluenceSize = 30;
+let int mouseInfluenceScalar = 10;
+let int gravity = 700;
 let int leftOverTime = 0;
 
 function int min(int a, int b) {
@@ -101,9 +101,9 @@ function void updateStep(float dt) {
     }
 }
 
-function uint render() {
+function int render() {
     let float lines[2000000];
-    let int idx = 0;
+    let int idx = 1;
 
     for(let int i=0; i<numLinks; i = i + 1) {
         if(!links[i].disabled) {
@@ -121,7 +121,7 @@ function uint render() {
         }
     }
 
-    lines[idx] = -1.0;
+    lines[0] = idx - 1;
     return int(lines);
 }
 

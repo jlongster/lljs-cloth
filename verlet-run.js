@@ -98,9 +98,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // render
 
         var ptr = window.verlet.render();
-        var length = 37710 * 2 * 2; // numLinks * 2 points * 2 floats * 4 bytes;
+        var length = F4[ptr >> 2];
 
-        var points = F4.subarray(ptr >> 2, (ptr >> 2) + length);
+        var points = F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
         renderer.render(points);
 
         requestAnimFrame(heartbeat);
