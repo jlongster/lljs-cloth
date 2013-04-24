@@ -13,9 +13,14 @@ function ajaxGet(url, success) {
 }
 
 function Renderer(canvas) {
+    var glOpts = {
+        antialias: false,
+        depth: false
+    };
+
     this.width = canvas.width;
     this.height = canvas.height;
-    this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    this.gl = canvas.getContext('webgl', glOpts) || canvas.getContext('experimental-webgl', glOpts);
     this.persMatrix = mat4.create();
     this.worldTransform = mat4.create();
     this.finalMatrix = mat4.create();
@@ -97,7 +102,7 @@ Renderer.prototype.init = function(vertexSrc, fragmentSrc) {
 Renderer.prototype.clear = function() {
     var gl = this.gl;
     gl.clearColor(.066666, .066666, .066666, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 };
 
 Renderer.prototype.render = function(points) {

@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.onmousemove = function(e) {
         e.preventDefault();
         var rect = canvas.getBoundingClientRect();
-        var mouse = [e.pageX - rect.left, e.pageY - rect.top];
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        console.log(scrollTop);
+        var mouse = [e.pageX - rect.left,
+                     e.pageY - rect.top - scrollTop];
 
         if(prevMouse) {
             var diff = [mouse[0] - prevMouse[0], mouse[1] - prevMouse[1]];
