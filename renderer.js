@@ -1,4 +1,17 @@
 
+function ajaxGet(url, success) {
+    var ajax = new XMLHttpRequest();
+
+    ajax.onreadystatechange = function() {
+        if(ajax.readyState == 4 && ajax.status == 200) {
+            success(ajax.responseText);
+        }
+    };
+
+    ajax.open('GET', url, true);
+    ajax.send();
+}
+
 function Renderer(canvas) {
     this.width = canvas.width;
     this.height = canvas.height;
@@ -8,6 +21,10 @@ function Renderer(canvas) {
     this.finalMatrix = mat4.create();
     this.isReady = false;
 
+    if(!this.gl) {
+        alert('WebGL is required and is not available on your device');
+    }
+
     mat4.ortho(0, this.width, this.height, 0, -1, 1, this.persMatrix);
     mat4.identity(this.worldTransform);
 
@@ -15,7 +32,7 @@ function Renderer(canvas) {
 
     var vsrc, fsrc, renderer = this;
 
-    $.get('shaders/basic.vsh', function(r) {
+    ajaxGet('shaders/basic.vsh', function(r) {
         vsrc = r;
 
         if(vsrc && fsrc) {
@@ -23,7 +40,7 @@ function Renderer(canvas) {
         }
     });
 
-    $.get('shaders/basic.fsh', function(r) {
+    ajaxGet('shaders/basic.fsh', function(r) {
         fsrc = r;
         
         if(vsrc && fsrc) {
@@ -79,7 +96,7 @@ Renderer.prototype.init = function(vertexSrc, fragmentSrc) {
 
 Renderer.prototype.clear = function() {
     var gl = this.gl;
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(.066666, .066666, .066666, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
 

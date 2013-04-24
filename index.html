@@ -5,23 +5,207 @@
 
     <style type="text/css">
       body {
-        background-color: black;
-        color: white;
+        background-color: #111111;
+        color: #f0f0f0;
+        margin: 0;
+      }
+
+      a, a:active {
+        color: rgb(90, 150, 255);
+        text-decoration: none;
+      }
+
+      a:visited {
+        color: rgb(70, 130, 225);
       }
 
       canvas {
         display: block;
+        margin: 0 auto;
+        clear: both;
+      }
+
+      .message-wrapper {
+        position: relative;
+      }
+
+      @keyframes pulse {
+        100% {
+          background-color: #df5050;
+        }
+      }
+
+      @-webkit-keyframes pulse {
+        100% {
+          background-color: #df5050;
+        }
+      }
+
+      .message {
+        background-color: #333333;
+        padding: 1em;
+        text-align: center;
+        border-radius: 5px;
+        position: absolute;
+        top: 6em;
+        left: 0;
+        width: 60%;
+        left: 20%;
+        font-size: 1.25em;
+        opacity: 1;
+
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+
+        animation-name: pulse;
+        animation-duration: 1s;
+        animation-direction: alternate;
+        animation-iteration-count: infinite;
+
+        -webkit-animation-name: pulse;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-direction: alternate;
+        -webkit-animation-iteration-count: infinite;
+      }
+
+      .message.disappear {
+        transition: opacity 3s;
+        opacity: 0;
+      }
+
+      .header {
+        width: 800px;
+        margin: 0 auto;
+        overflow: hidden;
+        padding: 1em 0;
+        padding-bottom: 1.5em;
+      }
+
+      .header-wrapper {
+        background-color: #333333;
+      }
+
+      .description {
+        float: left;
+        width: 60%;
+      }
+
+      .controls {
+        float: right;
+        font-weight: bold;
+        font-size: 1.25em;
+        margin-top: 1.5em;
+      }
+
+      .instructions {
+        margin-bottom: 1em;
+        font-weight: normal;
+      }
+
+      #status {
+        color: #df6666;
+      }
+
+      .field {
+        text-align: right;
+      }
+
+      .reset {
+       margin-top: 1em;
+      }
+
+      .sidebar {
+        width: 75px;
+        background-color: #494949;
+        box-shadow: 0 0 3px white;
+        border-radius: 0 5px 5px 0;
+        position: fixed;
+        top: 3.5em;
+        left: 0;
+        text-align: center;
+        padding: 1em .5em;
+      }
+
+      .sidebar a, .sidebar a:visited {
+        color: #d0d0d0;
+        text-decoration: none;
+      }
+
+      .sidebar .JL {
+        font-size: 1.25em;
+        text-decoration: underline;
+      }
+
+      .sidebar .share {
+        margin-top: 1em;
+      }
+
+      .sidebar .share-buttons {
+        display: none;
+      }
+
+      .sidebar .fb-like {
+        margin-bottom: 1em;
       }
     </style>
   </head>
   <body>
 
-    <h1>Cloth demo with LLJS</h1>
-    <p>
-      <em>move mouse to interact, right-click to tear</em>
-    </p>
+    <div class="sidebar">
+      <a class="JL" href="http://jlongster.com/">jlongster</a>
+      <div class="share"><a href="#">Share this demo!</a></div>
 
-    <script src="zepto.min.js"></script>    
+      <div class="share-buttons">
+        <div class="fb-like" data-send="false" data-layout="box_count" data-width="75" data-show-faces="false" data-font="arial" data-colorscheme="dark"></div>
+
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="jlongster" data-count="vertical">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+      </div>
+    </div>
+
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="description">
+          <h1>Tear-able cloth in asm.js</h1>
+          <p>
+            This was written in <a href="http://lljs.org">LLJS</a> which I have
+            <a href="http://jlongster.com/Compiling-LLJS-to-asm.js,-Now-Available-">ported</a>
+            to compile to
+            <a href="http://asmjs.org/">asm.js</a>. <a href="https://github.com/jlongster/lljs-cloth">View
+              the source code</a>, specifically
+            the <a href="https://github.com/jlongster/lljs-cloth/blob/master/verlet.ljs">LLJS
+              file</a>. It automatically scales up to the highest dimension your computer can handle.
+          </p>
+
+          <p>
+            Want to run it with <a href="http://asmjs.org/">asm.js</a> enabled?
+            Use <a href="http://nightly.mozilla.org/">Firefox
+              Nightly</a> to get a <em>much</em> larger cloth.
+          </p>
+        </div>
+
+        <div class="controls">
+          <div class="field instructions">
+            drag: <strong>left-click</strong> or <strong>q</strong><br />
+            tear: <strong>right-click</strong> or <strong>a</strong>
+          </div>
+          <div class="field">Cloth dimensions: <span id="status"></span></div>
+          <div class="field gravity">Gravity: <input type="checkbox" checked="true" /></div>
+          <div class="field wind">Wind: <input type="checkbox" /></div>
+          <div class="field reset"><button>Reset</button></div>          
+        </div>
+      </div>
+    </div>
+
+    <div class="message-wrapper">
+      <div class="message">
+        Seeing how much your system can handle...
+      </div>
+    </div>
+
+    <div id="fb-root"></div>
+
     <script src="gl-matrix.js"></script>
     <script src="renderer.js"></script>
     <script src="verlet-run.js"></script>
