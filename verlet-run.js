@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         var rect = canvas.getBoundingClientRect();
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        console.log(scrollTop);
         var mouse = [e.pageX - rect.left,
                      e.pageY - rect.top - scrollTop];
 
