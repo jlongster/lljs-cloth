@@ -15,7 +15,8 @@ function ajaxGet(url, success) {
 function Renderer(canvas) {
     var glOpts = {
         antialias: false,
-        depth: false
+        depth: false,
+        preserveDrawingBuffer: true
     };
 
     this.width = canvas.width;
