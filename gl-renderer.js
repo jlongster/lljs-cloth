@@ -28,7 +28,8 @@ function GLRenderer(canvas) {
     this.isReady = false;
 
     if(!this.gl) {
-        return null;
+        this.unsupported = true;
+        return;
     }
 
     mat4.ortho(0, this.width, this.height, 0, -1, 1, this.persMatrix);

@@ -16,7 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(canvas);
 
-    var renderer = new GLRenderer(canvas) || new CanvasRenderer(canvas);
+    var renderer = new GLRenderer(canvas);
+    if(renderer.unsupported) {
+        renderer = new CanvasRenderer(canvas);
+    }
+
     var prevMouse = null;
     var running = false;
     var meshLevel = 0;
@@ -25,14 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var lastTime;
     var F4 = new Float32Array(window.asmBuffer);
 
-    canvas.onmousemove = function(e) {
-        e.preventDefault();
-
+    function onInteract(x, y) {
         var rect = canvas.getBoundingClientRect();
         var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        var mouse = [e.pageX - rect.left - scrollLeft,
-                     e.pageY - rect.top - scrollTop];
+        var mouse = [x - rect.left - scrollLeft, y - rect.top - scrollTop];
 
         if(prevMouse) {
             window.verlet.mouseMove(mouse[0], mouse[1]);
@@ -42,6 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         prevMouse = mouse;
+    }
+
+    canvas.onmousemove = function(e) {
+        e.preventDefault();
+        onInteract(e.pageX, e.pageY);
     };
 
     canvas.onmouseup = function(e) {
@@ -62,6 +68,20 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.oncontextmenu = function(e) {
         e.preventDefault();
         return false;
+    };
+
+    canvas.ontouchstart = function(e) {
+        e.preventDefault();
+
+        window.verlet.setMouseButton(1);
+    };
+
+    canvas.ontouchmove = function(e) {
+        e.preventDefault();
+
+        var touch = e.changedTouches[0];
+        console.log(touch.pageX, touch.pageY);
+        onInteract(touch.pageX, touch.pageY);
     };
 
     document.onkeydown = function(e) {

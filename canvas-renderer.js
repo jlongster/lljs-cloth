@@ -2,8 +2,8 @@
 function CanvasRenderer(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.ctx.fillStyle = '#111111';
-    this.ctx.strokeStyle = 'blue';
+    this.ctx.fillStyle = '#222222';
+    this.ctx.strokeStyle = '#3380ff';
 }
 
 CanvasRenderer.prototype.render = function(points) {
