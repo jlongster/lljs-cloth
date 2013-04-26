@@ -115,6 +115,22 @@
        margin-top: 1em;
       }
 
+      .reset button {
+          font-size: 1em;
+          background-color: green;
+          color: white;
+          padding: .25em .5em;
+
+          border-top: 2px solid #aaffaa;
+          border-left: 2px solid #aaffaa;
+          border-bottom: 2px solid #33aa33;
+          border-right: 2px solid #33aa33;
+      }
+
+      .reset button:active {
+          border: 2px solid #113311;
+      }
+
       .sidebar {
         width: 75px;
         background-color: #494949;
@@ -209,7 +225,8 @@
     <div id="fb-root"></div>
 
     <script src="gl-matrix.js"></script>
-    <script src="renderer.js"></script>
+    <script src="gl-renderer.js"></script>
+    <script src="canvas-renderer.js"></script>
     <script src="verlet-run.js"></script>
     <script src="verlet.js"></script>
 

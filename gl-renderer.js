@@ -28,7 +28,7 @@ function GLRenderer(canvas) {
     this.isReady = false;
 
     if(!this.gl) {
-        return null;
+        alert('WebGL is required and is not available on your device');
     }
 
     mat4.ortho(0, this.width, this.height, 0, -1, 1, this.persMatrix);

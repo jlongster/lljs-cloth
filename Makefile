@@ -1,5 +1,5 @@
 
 all:
 	ljc -m verlet \
-	 -e update,render,main,mousemove,constructMesh,getClothW,getClothH,setGravity,setWind,setMouse \
+	 -e update,render,main,constructMesh,getClothW,getClothH,setGravity,setWind,setMouse,setMouseButton,mouseMove,getMouseButton \
 	 verlet.ljs > verlet.js

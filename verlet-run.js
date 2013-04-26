@@ -13,23 +13,21 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas = document.createElement('canvas');
     canvas.width = 1200;
     canvas.height = 800;
-    // var ctx = canvas.getContext('2d');
-    // ctx.fillStyle = '#111111';
-    // ctx.strokeStyle = 'blue';
 
     document.body.appendChild(canvas);
 
-    var renderer = new Renderer(canvas);
+    var renderer = new GLRenderer(canvas) || new CanvasRenderer(canvas);
     var prevMouse = null;
     var running = false;
     var meshLevel = 0;
     var meshSettled = false;
     var meshLastChange = 0;
-    var lastTime, leftClick, rightClick;
+    var lastTime;
     var F4 = new Float32Array(window.asmBuffer);
 
     canvas.onmousemove = function(e) {
         e.preventDefault();
+
         var rect = canvas.getBoundingClientRect();
         var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -37,13 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      e.pageY - rect.top - scrollTop];
 
         if(prevMouse) {
-            var diff = [mouse[0] - prevMouse[0], mouse[1] - prevMouse[1]];
-
-            window.verlet.mousemove(prevMouse[0] + diff[0] / 2.0,
-                                    prevMouse[1] + diff[1] / 2.0,
-                                    leftClick,
-                                    rightClick);
-            window.verlet.mousemove(mouse[0], mouse[1], leftClick, rightClick);
+            window.verlet.mouseMove(mouse[0], mouse[1]);
         }
         else {
             window.verlet.setMouse(mouse[0], mouse[1]);
@@ -54,8 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     canvas.onmouseup = function(e) {
         e.preventDefault();
-        leftClick = false;
-        rightClick = false;
+        window.verlet.setMouseButton(0);
     };
 
     canvas.onmouseleave = function(e) {
@@ -64,16 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     canvas.onmousedown = function(e) {
         e.preventDefault();
-        leftClick = false;
-        rightClick = false;
-
-        if(e.button == 0) {
-            leftClick = true;
-        }
-        else if(e.button == 2) {
-            rightClick = true;
-        }
-
+        window.verlet.setMouseButton(e.button == 0 ? 1 : (e.button == 2) ? 2 : 0);
         return false;
     };
 
@@ -83,16 +65,15 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     document.onkeydown = function(e) {
+        var btn = window.verlet.getMouseButton();
+
         switch(e.keyCode) {
         case 81:
-            rightClick = false;
-            leftClick = !leftClick; break;
+            window.verlet.setMouseButton(btn == 1 ? 0 : 1); break;
         case 65:
-            leftClick = false;
-            rightClick = !rightClick; break;
+            window.verlet.setMouseButton(btn == 2 ? 0 : 2); break;
         default:
-            leftClick = false;
-            rightClick = false;
+            window.verlet.setMouseButton(0);
         }
     };
     
@@ -106,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function start() {
         lastTime = Date.now();
-        meshLastChange = 0;
+        meshLastChange = lastTime;
         running = true;
         requestAnimFrame(heartbeat);
     }
@@ -130,6 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
             meshSettled = true;
             var msg = document.querySelector('.message');
             msg.innerHTML = 'Done!';
+            msg.style.animationName = 'none';
+            msg.style.webkitAnimationName = 'none';
             msg.style.backgroundColor = '#66df66';
             msg.style.color = 'black';
             msg.className = msg.className + ' disappear';
@@ -139,20 +122,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 3000);
 
             window.verlet.setWind(0);
+            window.verlet.setMouseButton(0);
             window.verlet.constructMesh(meshLevel);
             
             setGravity();
         }
-
-        if(!meshSettled) {
-            for(var i=0; i<4; i++) {
-                window.verlet.mousemove(canvas.width / 2 + i, 100, false, true);
-            }
+        else if(!meshSettled) {
+            window.verlet.setMouseButton(1);
+            window.verlet.mouseMove(canvas.width / 2 + Math.random() * 100 - 50, 100);
         }
 
         // update
 
-        window.verlet.update(dt);
+        window.verlet.update();
 
         // render
 
@@ -162,16 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var points = F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
         renderer.render(points);
 
-        // ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.beginPath();
-        // for(var i=0; i<length; i+=4) {
-        //     ctx.moveTo(points[i], points[i+1]);
-        //     ctx.lineTo(points[i+2], points[i+3]);
-        // }
-        // ctx.stroke();
-
         var after = currentTime();
-        if(after - now < 14 && !meshSettled) {
+        if(after - now < 15 && !meshSettled) {
             window.verlet.constructMesh(meshLevel++);
             meshLastChange = after;
 
