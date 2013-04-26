@@ -28,20 +28,18 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.onmousemove = function(e) {
         e.preventDefault();
         var rect = canvas.getBoundingClientRect();
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        var mouse = [e.pageX - rect.left,
+        var mouse = [e.pageX - rect.left - scrollLeft,
                      e.pageY - rect.top - scrollTop];
 
         if(prevMouse) {
             var diff = [mouse[0] - prevMouse[0], mouse[1] - prevMouse[1]];
-            var d = Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 
-            for(var i=0; i<d; i+=d/10) {
-                window.verlet.mousemove(prevMouse[0] + diff[0] * (i / d),
-                                        prevMouse[1] + diff[1] * (i / d),
-                                        rightClick);
-            }
-
+            window.verlet.mousemove(prevMouse[0] + diff[0] / 2.0,
+                                    prevMouse[1] + diff[1] / 2.0,
+                                    leftClick,
+                                    rightClick);
             window.verlet.mousemove(mouse[0], mouse[1], leftClick, rightClick);
         }
         else {
@@ -107,16 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setGravity() {
-        if(window.verlet.getClothH() > 70) {
-            //window.verlet.setGravity(1000);
-        }
-
-        window.verlet.setGravity(600);
+        window.verlet.setGravity(980);
     }
 
     function start() {
         lastTime = Date.now();
-        meshLastChange = lastTime;
+        meshLastChange = 0;
         running = true;
         requestAnimFrame(heartbeat);
     }

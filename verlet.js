@@ -57,7 +57,7 @@ var numLinks = 0;
 var canvasWidth = 0;
 var mouseInfluenceSize = 15;
 var mouseInfluenceScalar = 30;
-var tearSensitivity = 50;
+var tearSensitivity = 65;
 var gravity = 0;
 var windEnabled = 0;
 var leftOverTime = 0;
@@ -70,20 +70,16 @@ var startTime = 0;
     F4[(thisPtr) >> 2] = x;
     F4[((thisPtr) + 4 | 0) >> 2] = y;
   }
-  function Point$Point(thisPtr, x, y, sizeX, sizeY, mass, pinned) {
+  function Point$Point(thisPtr, x, y, mass, pinned) {
     thisPtr = thisPtr | 0;
     x = +x;
     y = +y;
-    sizeX = +sizeX;
-    sizeY = +sizeY;
     mass = +mass;
     pinned = pinned | 0;
     var $SP = 0;
     F4[((thisPtr)) >> 2] = x;
     F4[(((thisPtr)) + 4 | 0) >> 2] = y;
     memcpy((thisPtr) + 8 | 0, (thisPtr) | 0, 8);
-    F4[((thisPtr) + 16 | 0) >> 2] = sizeX;
-    F4[(((thisPtr) + 16 | 0) + 4 | 0) >> 2] = sizeY;
     F4[((thisPtr) + 24 | 0) >> 2] = mass;
     F4[((thisPtr) + 32 | 0) >> 2] = +0;
     F4[(((thisPtr) + 32 | 0) + 4 | 0) >> 2] = +0;
@@ -120,23 +116,28 @@ function distPointToLine(x, y, p1, p2) {
   y = +y;
   p1 = p1 | 0;
   p2 = p2 | 0;
-  var _ = 0.0, _$1 = 0.0, A = 0, B = 0, len = 0.0, det = 0.0, bool = 0, C = 0, $SP = 0;
+  var _ = 0.0, _$1 = 0.0, _$2 = 0.0, A = 0, B = 0, lenA = 0.0, lenB = 0.0, det = 0.0, bool = 0, C = 0, $SP = 0;
   U4[1] = (U4[1] | 0) - 24;
   $SP = U4[1] | 0;
   (Vec2d$Vec2d(($SP) | 0 | 0, +(+(+F4[(p1) >> 2]) - +x), +(+(+F4[((p1) + 4 | 0) >> 2]) - +y)), F4[($SP) >> 2]);
   (Vec2d$Vec2d(($SP) + 8 | 0 | 0, +(+(+F4[(p2) >> 2]) - +(+F4[(p1) >> 2])), +(+(+F4[((p2) + 4 | 0) >> 2]) - +(+F4[((p1) + 4 | 0) >> 2]))), F4[(($SP) + 8 | 0) >> 2]);
-  len = +(+(+F4[(($SP) + 8 | 0) >> 2]) * +(+F4[(($SP) + 8 | 0) >> 2]) + +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]));
+  lenA = +(+(+F4[(($SP)) >> 2]) * +(+F4[(($SP)) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2]));
+  lenB = +(+(+F4[(($SP) + 8 | 0) >> 2]) * +(+F4[(($SP) + 8 | 0) >> 2]) + +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]));
+  // It can't intersect if it's too far away
+  if (+lenA > +lenB) {
+    return +(_ = +1000, U4[1] = (U4[1] | 0) + 24 | 0, _);
+  }
   det = +(+-+F4[(($SP)) >> 2] * +(+F4[(($SP) + 8 | 0) >> 2]) + +-+F4[((($SP)) + 4 | 0) >> 2] * +(+F4[((($SP)) + 4 | 0) >> 2]));
   bool = +(+det) < +(+(+0));
-  if (+det > +len) {
+  if (+det > +lenB) {
     bool = 1;
   }
   if (bool) {
     (Vec2d$Vec2d(($SP) + 16 | 0 | 0, +(+(+F4[(p2) >> 2]) - +x), +(+(+F4[((p2) + 4 | 0) >> 2]) - +y)), F4[(($SP) + 16 | 0) >> 2]);
-    return +(_ = +(min(~~(+(+F4[(($SP)) >> 2]) * +(+F4[(($SP)) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2])), ~~(+(+F4[(($SP) + 16 | 0) >> 2]) * +(+F4[(($SP) + 16 | 0) >> 2]) + +(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]))) | 0), U4[1] = (U4[1] | 0) + 24 | 0, _);
+    return +(_$1 = +(min(~~lenA, ~~(+(+F4[(($SP) + 16 | 0) >> 2]) * +(+F4[(($SP) + 16 | 0) >> 2]) + +(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]) * +(+F4[((($SP) + 16 | 0) + 4 | 0) >> 2]))) | 0), U4[1] = (U4[1] | 0) + 24 | 0, _$1);
   }
   det = +(+(+F4[(($SP) + 8 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2]) - +(+F4[((($SP) + 8 | 0) + 4 | 0) >> 2]) * +(+F4[(($SP)) >> 2]));
-  return +(_$1 = +(+det * +det / +len), U4[1] = (U4[1] | 0) + 24 | 0, _$1);
+  return +(_$2 = +(+det * +det / +lenB), U4[1] = (U4[1] | 0) + 24 | 0, _$2);
   U4[1] = (U4[1] | 0) + 24;
   return 0.0;
 }
@@ -153,7 +154,7 @@ function updateStep(dt, totalTime) {
   dt = +dt;
   totalTime = +totalTime;
   var _ = 0, _$1 = 0, _$2 = 0, z = 0, i = 0, i$1 = 0, $SP = 0;
-  for (z = 0; (z | 0) < 3; _ = z, z = (z | 0) + 1 | 0, _) {
+  for (z = 0; (z | 0) < 5; _ = z, z = (z | 0) + 1 | 0, _) {
     for (i = 0; (i | 0) < (numLinks | 0); _$1 = i, i = (i | 0) + 1 | 0, _$1) {
       if (!(I4[(((((totalSize - globalSP | 0) + 26000064 | 0) + i * 24)) + 20 | 0) >> 2] | 0)) {
         solveLink((((totalSize - globalSP | 0) + 26000064 | 0) + i * 24) | 0);
@@ -162,7 +163,7 @@ function updateStep(dt, totalTime) {
   }
   for (i$1 = 0; (i$1 | 0) < (numPoints | 0); _$2 = i$1, i$1 = (i$1 | 0) + 1 | 0, _$2) {
     if (windEnabled) {
-      applyForce((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52) | 0, +(((+cos(+(+(+F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52))) >> 2]) / +30)) + +1) * +80 + +(+F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52))) + 4 | 0) >> 2]) / +700 * +200) * (+sin(+(+totalTime / +1000)) * 0.5 + +1)), +0);
+      applyForce((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52) | 0, +(((+cos(+(+(+F4[(((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52))) >> 2]) / +30)) + +1) * +200 + +(+F4[((((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52))) + 4 | 0) >> 2]) / +700 * +600) * (+sin(+(+totalTime / +1000)) * 0.5 + +1)), +0);
     }
     updatePoint((((totalSize - globalSP | 0) + 64 | 0) + i$1 * 52) | 0, dt);
   }
@@ -201,8 +202,6 @@ function mousemove(x, y, leftClick, rightClick) {
       d = distPointToLine(x, y, (p1) | 0 | 0, (p2) | 0 | 0);
       if (+d < +(+12)) {
         I4[(((((totalSize - globalSP | 0) + 26000064 | 0) + i * 24)) + 20 | 0) >> 2] = 1;
-        I4[((U4[((((totalSize - globalSP | 0) + 26000064 | 0) + i * 24)) >> 2] | 0) + 48 | 0) >> 2] = 0;
-        I4[((U4[(((((totalSize - globalSP | 0) + 26000064 | 0) + i * 24)) + 4 | 0) >> 2] | 0) + 48 | 0) >> 2] = 0;
       }
     }
   } else if (leftClick) {
@@ -238,7 +237,7 @@ function updatePoint(p, dt) {
   ly = +F4[(((p) + 8 | 0) + 4 | 0) >> 2];
   if (!(I4[((p) + 40 | 0) >> 2] | 0)) {
     memcpy((p) + 8 | 0, (p) | 0, 8);
-    (Vec2d$Vec2d(($SP) | 0 | 0, +((+x - +lx) * 0.99), +((+y - +ly) * 0.99)), F4[($SP) >> 2]);
+    (Vec2d$Vec2d(($SP) | 0 | 0, +((+x - +lx) * 0.9), +((+y - +ly) * 0.9)), F4[($SP) >> 2]);
     F4[((p)) >> 2] = +(+x + +(+F4[(($SP)) >> 2]) + +(+F4[((p) + 32 | 0) >> 2]) * +dtSeq);
     F4[(((p)) + 4 | 0) >> 2] = +(+y + +(+F4[((($SP)) + 4 | 0) >> 2]) + +(+F4[(((p) + 32 | 0) + 4 | 0) >> 2]) * +dtSeq);
   }
@@ -265,7 +264,7 @@ function solveLink(link) {
   p2 = U4[((link) + 4 | 0) >> 2] | 0 | 0;
   (Vec2d$Vec2d(($SP) | 0 | 0, +(+(+F4[((p1)) >> 2]) - +(+F4[((p2)) >> 2])), +(+(+F4[(((p1)) + 4 | 0) >> 2]) - +(+F4[(((p2)) + 4 | 0) >> 2]))), F4[($SP) >> 2]);
   d = sqrt(+(+(+F4[(($SP)) >> 2]) * +(+F4[(($SP)) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2])));
-  if (+d > +(+(tearSensitivity | 0))) {
+  if (+d > +(+F4[((link) + 16 | 0) >> 2])) {
     removeLink(link | 0);
   }
   scalar = +((+(+F4[((link) + 8 | 0) >> 2]) - +d) / +d);
@@ -292,7 +291,7 @@ function removeLink(link) {
 // Init
 function constructMesh(level) {
   level = level | 0;
-  var _ = 0, _$1 = 0, linkPtr = 0, pointPtr = 0, restingDistance = 0.0, startX = 0, startY = 0, y = 0, x = 0, pinned = 0, p = 0, index = 0, l = 0, l$1 = 0, $SP = 0;
+  var _ = 0, _$1 = 0, linkPtr = 0, pointPtr = 0, restingDistance = 0.0, startX = 0, startY = 0, y = 0, x = 0, p = 0, index = 0, tearness = 0.0, l = 0, l$1 = 0, $SP = 0;
   U4[1] = (U4[1] | 0) - 104;
   $SP = U4[1] | 0;
   clothW = (level | 0) + 8 | 0;
@@ -309,29 +308,27 @@ function constructMesh(level) {
   }
   for (y = 0; (y | 0) < (clothH | 0); _ = y, y = (y | 0) + 1 | 0, _) {
     for (x = 0; (x | 0) < (clothW | 0); _$1 = x, x = (x | 0) + 1 | 0, _$1) {
-      pinned = 0;
-      if ((y | 0) == 0) {
-        //if(x % 2 == 0) {
-        pinned = 1;
-      }
-      (Point$Point(($SP) | 0 | 0, +(+(startX | 0) + +(x | 0) * +restingDistance), +(+(startY | 0) + +(y | 0) * +restingDistance), +3, +3, +1, pinned), F4[($SP) >> 2]);
+      (Point$Point(($SP) | 0 | 0, +(+(startX | 0) + +(x | 0) * +restingDistance), +(+(startY | 0) + +(y | 0) * +restingDistance), +1, (y | 0 | 0) == 0), F4[($SP) >> 2]);
       index = (imul(y | 0, clothW | 0) | 0 | 0) + (x | 0 | 0) | 0 | 0;
       memcpy((((totalSize - globalSP | 0) + 64 | 0) + index * 52) | 0, ($SP) | 0, 52);
+      tearness = +(tearSensitivity | 0);
       if ((clothH | 0) > 70) {
-        I4[(((((totalSize - globalSP | 0) + 64 | 0) + index * 52)) + 48 | 0) >> 2] = 1;
-        if (((y | 0) % 2 | 0 | 0) == 0) {
-          if (((x | 0) % 4 | 0 | 0) != 0) {
-            I4[(((((totalSize - globalSP | 0) + 64 | 0) + index * 52)) + 48 | 0) >> 2] = 0;
+        if ((y | 0) % 2 | 0) {
+          if ((x | 0) % 2 | 0) {
+            I4[(((((totalSize - globalSP | 0) + 64 | 0) + index * 52)) + 48 | 0) >> 2] = 1;
           }
+        }
+        if ((y | 0) < 10) {
+          tearness = +80;
         }
       }
       if ((x | 0) > 0) {
-        (Link$Link(($SP) + 56 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((index | 0 | 0 | 0) - 1 | 0 | 0 | 0) * 52) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 52) | 0 | 0, restingDistance, +1, +(tearSensitivity | 0)), U4[(($SP) + 56 | 0) >> 2]);
+        (Link$Link(($SP) + 56 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((index | 0 | 0 | 0) - 1 | 0 | 0 | 0) * 52) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 52) | 0 | 0, restingDistance, +1, tearness), U4[(($SP) + 56 | 0) >> 2]);
         memcpy((((totalSize - globalSP | 0) + 26000064 | 0) + linkPtr * 24) | 0, ($SP) + 56 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
       if ((y | 0) > 0) {
-        (Link$Link(($SP) + 80 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((imul((y | 0 | 0 | 0) - 1 | 0 | 0 | 0, clothW | 0) | 0 | 0 | 0) + (x | 0 | 0 | 0) | 0 | 0 | 0) * 52) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 52) | 0 | 0, restingDistance, +1, +(tearSensitivity | 0)), U4[(($SP) + 80 | 0) >> 2]);
+        (Link$Link(($SP) + 80 | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + ((imul((y | 0 | 0 | 0) - 1 | 0 | 0 | 0, clothW | 0) | 0 | 0 | 0) + (x | 0 | 0 | 0) | 0 | 0 | 0) * 52) | 0 | 0, (((totalSize - globalSP | 0) + 64 | 0) + index * 52) | 0 | 0, restingDistance, +1, tearness), U4[(($SP) + 80 | 0) >> 2]);
         memcpy((((totalSize - globalSP | 0) + 26000064 | 0) + linkPtr * 24) | 0, ($SP) + 80 | 0, 24);
         linkPtr = (linkPtr | 0) + 1 | 0;
       }
@@ -359,11 +356,6 @@ function setWind(flag) {
   flag = flag | 0;
   var $SP = 0;
   windEnabled = flag;
-  if (windEnabled) {
-    tearSensitivity = 500;
-  } else {
-    tearSensitivity = 50;
-  }
 }
 function setMouse(x, y) {
   x = x | 0;
