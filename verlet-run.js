@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else {
             window.verlet.setWind(0);
-            window.verlet.constructMesh(meshLevel);
         }
     });
 
