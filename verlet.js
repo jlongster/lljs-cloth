@@ -56,7 +56,7 @@ var numPoints = 0;
 var numLinks = 0;
 var canvasWidth = 0;
 var mouseInfluenceSize = 15;
-var mouseInfluenceScalar = 30;
+var mouseInfluenceScalar = 25;
 var tearSensitivity = 65;
 var gravity = 0;
 var windEnabled = 0;
@@ -257,28 +257,29 @@ function applyForce(p, x, y) {
 // Link implementation
 function solveLink(link) {
   link = link | 0;
-  var p1 = 0, p2 = 0, diff = 0, d = 0.0, scalar = 0.0, im1 = 0.0, im2 = 0.0, scalarP1 = 0.0, scalarP2 = 0.0, $SP = 0;
+  var p1 = 0, p2 = 0, diff = 0, d = 0.0, scalar = 0.0, $SP = 0;
   U4[1] = (U4[1] | 0) - 8;
   $SP = U4[1] | 0;
   p1 = U4[(link) >> 2] | 0 | 0;
   p2 = U4[((link) + 4 | 0) >> 2] | 0 | 0;
-  (Vec2d$Vec2d(($SP) | 0 | 0, +(+(+F4[((p1)) >> 2]) - +(+F4[((p2)) >> 2])), +(+(+F4[(((p1)) + 4 | 0) >> 2]) - +(+F4[(((p2)) + 4 | 0) >> 2]))), F4[($SP) >> 2]);
+  F4[(($SP)) >> 2] = +(+(+F4[((p1)) >> 2]) - +(+F4[((p2)) >> 2]));
+  F4[((($SP)) + 4 | 0) >> 2] = +(+(+F4[(((p1)) + 4 | 0) >> 2]) - +(+F4[(((p2)) + 4 | 0) >> 2]));
   d = sqrt(+(+(+F4[(($SP)) >> 2]) * +(+F4[(($SP)) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +(+F4[((($SP)) + 4 | 0) >> 2])));
   if (+d > +(+F4[((link) + 16 | 0) >> 2])) {
     removeLink(link | 0);
   }
   scalar = +((+(+F4[((link) + 8 | 0) >> 2]) - +d) / +d);
-  im1 = +(+1 / +(+F4[((p1) + 24 | 0) >> 2]));
-  im2 = +(+1 / +(+F4[((p2) + 24 | 0) >> 2]));
-  scalarP1 = +(+im1 / (+im1 + +im2) * +(+F4[((link) + 12 | 0) >> 2]));
-  scalarP2 = +(+(+F4[((link) + 12 | 0) >> 2]) - +scalarP1);
+  /* let float im1 = 1.0 / p1->mass; */
+  /* let float im2 = 1.0 / p2->mass; */
+  /* let float scalarP1 = (im1 / (im1 + im2)) * link->stiffness; */
+  /* let float scalarP2 = link->stiffness - scalarP1; */
   if (!(I4[((p1) + 40 | 0) >> 2] | 0)) {
-    F4[((p1)) >> 2] = +(+(+F4[((p1)) >> 2]) + +(+F4[(($SP)) >> 2]) * +scalarP1 * +scalar);
-    F4[(((p1)) + 4 | 0) >> 2] = +(+(+F4[(((p1)) + 4 | 0) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +scalarP1 * +scalar);
+    F4[((p1)) >> 2] = +(+(+F4[((p1)) >> 2]) + +(+F4[(($SP)) >> 2]) * +scalar * 0.5);
+    F4[(((p1)) + 4 | 0) >> 2] = +(+(+F4[(((p1)) + 4 | 0) >> 2]) + +(+F4[((($SP)) + 4 | 0) >> 2]) * +scalar * 0.5);
   }
   if (!(I4[((p2) + 40 | 0) >> 2] | 0)) {
-    F4[((p2)) >> 2] = +(+(+F4[((p2)) >> 2]) - +(+F4[(($SP)) >> 2]) * +scalarP2 * +scalar);
-    F4[(((p2)) + 4 | 0) >> 2] = +(+(+F4[(((p2)) + 4 | 0) >> 2]) - +(+F4[((($SP)) + 4 | 0) >> 2]) * +scalarP2 * +scalar);
+    F4[((p2)) >> 2] = +(+(+F4[((p2)) >> 2]) - +(+F4[(($SP)) >> 2]) * +scalar * 0.5);
+    F4[(((p2)) + 4 | 0) >> 2] = +(+(+F4[(((p2)) + 4 | 0) >> 2]) - +(+F4[((($SP)) + 4 | 0) >> 2]) * +scalar * 0.5);
   }
   U4[1] = (U4[1] | 0) + 8;
   return 0.0;

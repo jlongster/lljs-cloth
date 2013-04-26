@@ -66,7 +66,7 @@ let Link links[500000];
 let Vec2d lastMouse;
 let int canvasWidth = 0;
 let int mouseInfluenceSize = 15;
-let int mouseInfluenceScalar = 30;
+let int mouseInfluenceScalar = 25;
 let int tearSensitivity = 65;
 let int gravity = 0;
 let int windEnabled = 0;
@@ -225,8 +225,9 @@ function void solveLink(Link *link) {
     let Point *p1 = link->p1;
     let Point *p2 = link->p2;
 
-    let Vec2d diff(p1->pos.x - p2->pos.x,
-                   p1->pos.y - p2->pos.y);
+    let Vec2d diff;
+    diff.x = p1->pos.x - p2->pos.x;
+    diff.y = p1->pos.y - p2->pos.y;
     let float d = sqrt(diff.x * diff.x + diff.y * diff.y);
 
     if(d > link->tearness) {
@@ -235,19 +236,19 @@ function void solveLink(Link *link) {
 
     let float scalar = (link->distRest - d) / d;
 
-    let float im1 = 1.0 / p1->mass;
-    let float im2 = 1.0 / p2->mass;
-    let float scalarP1 = (im1 / (im1 + im2)) * link->stiffness;
-    let float scalarP2 = link->stiffness - scalarP1;
+    /* let float im1 = 1.0 / p1->mass; */
+    /* let float im2 = 1.0 / p2->mass; */
+    /* let float scalarP1 = (im1 / (im1 + im2)) * link->stiffness; */
+    /* let float scalarP2 = link->stiffness - scalarP1; */
 
     if(!p1->pinned) {
-        p1->pos.x = p1->pos.x + diff.x * scalarP1 * scalar;
-        p1->pos.y = p1->pos.y + diff.y * scalarP1 * scalar;
+        p1->pos.x = p1->pos.x + diff.x * scalar * .5;
+        p1->pos.y = p1->pos.y + diff.y * scalar * .5;
     }
 
     if(!p2->pinned) {
-        p2->pos.x = p2->pos.x - diff.x * scalarP2 * scalar;
-        p2->pos.y = p2->pos.y - diff.y * scalarP2 * scalar;
+        p2->pos.x = p2->pos.x - diff.x * scalar * .5;
+        p2->pos.y = p2->pos.y - diff.y * scalar * .5;
     }
 }
 

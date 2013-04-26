@@ -34,6 +34,10 @@ function Renderer(canvas) {
     mat4.ortho(0, this.width, this.height, 0, -1, 1, this.persMatrix);
     mat4.identity(this.worldTransform);
 
+    mat4.multiply(this.persMatrix,
+                  this.worldTransform,
+                  this.finalMatrix);
+
     // Fetch the shaders
 
     var vsrc, fsrc, renderer = this;
@@ -96,13 +100,19 @@ Renderer.prototype.init = function(vertexSrc, fragmentSrc) {
 
     this.program = program;
     this.worldTransformLoc = gl.getUniformLocation(program, 'worldTransform');
+    gl.uniformMatrix4fv(this.worldTransformLoc, false, this.finalMatrix);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+
+    var loc = gl.getAttribLocation(this.program, 'a_position');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.isReady = true;
 };
 
 Renderer.prototype.clear = function() {
     var gl = this.gl;
-    gl.clearColor(.066666, .066666, .066666, 1.0);
+    gl.clearColor(.133333, .133333, .133333, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 };
 
@@ -114,18 +124,6 @@ Renderer.prototype.render = function(points) {
     var gl = this.gl;
 
     this.clear();
-    mat4.multiply(this.persMatrix,
-                  this.worldTransform,
-                  this.finalMatrix);
-
-    gl.uniformMatrix4fv(this.worldTransformLoc, false, this.finalMatrix);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
-
-    var loc = gl.getAttribLocation(this.program, 'a_position');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-
     gl.drawArrays(gl.LINES, 0, points.length / 2);
 };

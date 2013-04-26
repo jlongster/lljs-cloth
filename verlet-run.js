@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas = document.createElement('canvas');
     canvas.width = 1200;
     canvas.height = 800;
+    // var ctx = canvas.getContext('2d');
+    // ctx.fillStyle = '#111111';
+    // ctx.strokeStyle = 'blue';
 
     document.body.appendChild(canvas);
 
@@ -47,13 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         prevMouse = mouse;
-    };
-
-    canvas.ontouchstart = function(e) {
-        var touch = e.changedTouches[0];
-        canvas.onmousemove({ preventDefault: function() {},
-                             pageX: touch.pageX,
-                             pageY: touch.pageY });
     };
 
     canvas.onmouseup = function(e) {
@@ -124,6 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        requestAnimFrame(heartbeat);
+
         var now = currentTime();
         var dt = now - lastTime;
         lastTime = now;
@@ -164,15 +162,21 @@ document.addEventListener('DOMContentLoaded', function() {
         var points = F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
         renderer.render(points);
 
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // ctx.beginPath();
+        // for(var i=0; i<length; i+=4) {
+        //     ctx.moveTo(points[i], points[i+1]);
+        //     ctx.lineTo(points[i+2], points[i+3]);
+        // }
+        // ctx.stroke();
+
         var after = currentTime();
-        if(after - now < 16 && !meshSettled) {
+        if(after - now < 14 && !meshSettled) {
             window.verlet.constructMesh(meshLevel++);
             meshLastChange = after;
 
             updateStatus(window.verlet.getClothW(), window.verlet.getClothH());
         }
-
-        requestAnimFrame(heartbeat);
     }
 
     var gravity = document.querySelector('.controls .gravity input');
