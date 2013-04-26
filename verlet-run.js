@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function currentTime() {
-    if(performance.now) {
+    if(typeof performance !== 'undefined' && performance.now) {
         return performance.now();
     }
     else {
