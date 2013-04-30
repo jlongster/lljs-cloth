@@ -127,7 +127,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var dt = now - lastTime;
         lastTime = now;
 
-        if(!meshSettled && now - meshLastChange > 1000) {
+        // Require a minimum meshLevel of 5 because if the page is
+        // opened in a background tab it will not be run will think it
+        // has settled
+        if(!meshSettled && now - meshLastChange > 1000 && meshLevel > 5) {
             meshSettled = true;
             var msg = document.querySelector('.message');
             msg.innerHTML = 'Done!';

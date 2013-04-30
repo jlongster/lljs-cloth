@@ -3,7 +3,7 @@ function CanvasRenderer(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.ctx.fillStyle = '#222222';
-    this.ctx.strokeStyle = '#3380ff';
+    this.ctx.strokeStyle = '#66b2ff';
 }
 
 CanvasRenderer.prototype.render = function(points) {
