@@ -1,0 +1,160 @@
+body {
+    background-color: white;
+    margin: 0;
+}
+
+a, a:active {
+    color: rgb(90, 150, 255);
+    text-decoration: none;
+}
+
+a:visited {
+    color: rgb(70, 130, 225);
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    clear: both;
+}
+
+.out-of-date {
+    color: red;
+    font-style: italic;
+}
+
+.message-wrapper {
+    position: relative;
+}
+
+@keyframes pulse {
+    100% {
+        background-color: #df5050;
+    }
+}
+
+@-webkit-keyframes pulse {
+    100% {
+        background-color: #df5050;
+    }
+}
+
+.message {
+    background-color: #333333;
+    padding: 1em;
+    text-align: center;
+    border-radius: 5px;
+    position: absolute;
+    top: 6em;
+    left: 0;
+    width: 60%;
+    left: 20%;
+    font-size: 1.25em;
+    opacity: 1;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    animation-name: pulse;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name: pulse;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-iteration-count: infinite;
+}
+
+.message.disappear {
+    transition: opacity 3s;
+    opacity: 0;
+}
+
+.header {
+    width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 1em 0;
+    padding-bottom: 1.5em;
+}
+
+.description {
+    float: left;
+    width: 60%;
+}
+
+.controls {
+    float: right;
+    font-weight: bold;
+    font-size: 1.25em;
+    margin-top: 1.5em;
+}
+
+.instructions {
+    margin-bottom: 1em;
+    font-weight: normal;
+}
+
+#status {
+    color: #df6666;
+}
+
+.field {
+    text-align: right;
+}
+
+.reset {
+    margin-top: 1em;
+}
+
+.reset button {
+    font-size: 1em;
+    background-color: green;
+    color: white;
+    padding: .25em .5em;
+
+    border-top: 2px solid #aaffaa;
+    border-left: 2px solid #aaffaa;
+    border-bottom: 2px solid #33aa33;
+    border-right: 2px solid #33aa33;
+}
+
+.reset button:active {
+    border: 2px solid #113311;
+}
+
+.sidebar {
+    width: 75px;
+    background-color: #494949;
+    box-shadow: 0 0 3px white;
+    border-radius: 0 5px 5px 0;
+    position: fixed;
+    top: 3.5em;
+    left: 0;
+    text-align: center;
+    padding: 1em .5em;
+}
+
+.sidebar a, .sidebar a:visited {
+    color: #d0d0d0;
+    text-decoration: none;
+}
+
+.sidebar .JL {
+    font-size: 1.25em;
+    text-decoration: underline;
+}
+
+.sidebar .share {
+    margin-top: 1em;
+}
+
+.sidebar .share-buttons {
+    display: none;
+}
+
+.sidebar .fb-like {
+    margin-bottom: 1em;
+}

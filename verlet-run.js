@@ -23,11 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var prevMouse = null;
     var running = false;
-    var meshLevel = 0;
-    var meshSettled = false;
+    var meshLevel = 5;
+    var meshSettled = true;
     var meshLastChange = 0;
     var lastTime;
-    var F4 = new Float32Array(window.asmBuffer);
 
     function onInteract(x, y) {
         var rect = canvas.getBoundingClientRect();
@@ -162,10 +161,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // render
 
         var ptr = window.verlet.render();
-        var length = F4[ptr >> 2];
+        var length = window.F4[ptr >> 2];
 
-        var points = F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
-        renderer.render(points);
+        var points = window.F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
+        renderer.render(points,
+                        window.verlet.getClothW(),
+                        window.verlet.getClothH());
 
         var after = currentTime();
         if(after - now < 15 && !meshSettled) {
@@ -176,32 +177,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    var gravity = document.querySelector('.controls .gravity input');
-    gravity.checked = true;
-    gravity.addEventListener('click', function() {
-        if(this.checked) {
-            setGravity();
-        }
-        else {
-            window.verlet.setGravity(0);
-        }
-    });
+    // var gravity = document.querySelector('.controls .gravity input');
+    // gravity.checked = true;
+    // gravity.addEventListener('click', function() {
+    //     if(this.checked) {
+    //         setGravity();
+    //     }
+    //     else {
+    //         window.verlet.setGravity(0);
+    //     }
+    // });
 
-    var wind = document.querySelector('.controls .wind input');
-    wind.checked = false;
-    wind.addEventListener('click', function() {
-        if(this.checked) {
-            window.verlet.setWind(1);
-        }
-        else {
-            window.verlet.setWind(0);
-        }
-    });
+    // var wind = document.querySelector('.controls .wind input');
+    // wind.checked = false;
+    // wind.addEventListener('click', function() {
+    //     if(this.checked) {
+    //         window.verlet.setWind(1);
+    //     }
+    //     else {
+    //         window.verlet.setWind(0);
+    //     }
+    // });
 
-    var resetbtn = document.querySelector('.controls .reset button');
-    resetbtn.addEventListener('click', function() {
-        window.verlet.constructMesh(meshLevel);
-    });
+    // var resetbtn = document.querySelector('.controls .reset button');
+    // resetbtn.addEventListener('click', function() {
+    //     window.verlet.constructMesh(meshLevel);
+    // });
 
     var share = document.querySelector('.sidebar .share a');
     share.addEventListener('click', function(e) {
@@ -218,8 +219,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     window.verlet.main(canvas.width);
-    window.verlet.constructMesh(0);
-    window.verlet.setWind(1);
+    window.verlet.constructMesh(300);
+    document.querySelector('.message').style.display = 'none';
+    window.verlet.setWind(0);
     setGravity();
     start();
 });

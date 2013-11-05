@@ -46,7 +46,6 @@ struct Link {
         this->distRest = distRest;
         this->stiffness = stiffness;
         this->tearness = tearness;
-        this->disabled = 0;
     }
 
     Point *p1;
@@ -54,13 +53,13 @@ struct Link {
     float distRest;
     float stiffness;
     float tearness;
-    int disabled;
 }
 
 let int clothW = 0;
 let int clothH = 0;
 let int numPoints = 0;
 let Point points[500000];
+//let Link* linkMap[500000][4];
 
 let int numLinks = 0;
 let Link links[500000];
@@ -125,14 +124,18 @@ function void update() {
 
     for(let int z=0; z<5; z++) {
         for(let int i=0; i<numLinks; i++) {
+            let int valid = 1;
+
             if(links[i].p1->markRemove) {
-                removeLink(&links[i]);
-            }
-            else if(links[i].p2->markRemove) {
-                removeLink(&links[i]);
+                valid = 0;
             }
 
-            if(!links[i].disabled) {
+            if(links[i].p2->markRemove) {
+                valid = 0;
+            }
+
+
+            if(valid) {
                 solveLink(&links[i]);
             }
         }
@@ -150,21 +153,67 @@ function void update() {
 }
 
 function int render() {
-    let float lines[2000000];
+    let float verts[2000000];
     let int idx = 1;
 
-    for(let int i=0; i<numLinks; i++) {
-        if(!links[i].disabled) {
-            lines[idx] = links[i].p1->pos.x;
-            lines[idx + 1] = links[i].p1->pos.y;
-            lines[idx + 2] = links[i].p2->pos.x;
-            lines[idx + 3] = links[i].p2->pos.y;
-            idx = idx + 4;
+    for(let int i=0; i<numPoints; i++) {
+        let int x = i % clothW;
+        let int y = i / clothW;
+
+        if(x < clothW - 1) {
+            if(y < clothH - 1) {
+                let Point *p1 = &points[y * clothW + x];
+                let Point *p2 = &points[(y + 1) * clothW + x];
+                let Point *p3 = &points[(y + 1) * clothW + x + 1];
+                let Point *p4 = &points[y * clothW + x + 1];
+                let int valid = 1;
+
+                // I really need to implement &&
+                if(p1->markRemove) {
+                    valid = 0;
+                }
+                if(p2->markRemove) {
+                    valid = 0;
+                }
+                if(p3->markRemove) {
+                    valid = 0;
+                }
+
+                if(valid) {
+                    verts[idx++] = p1->pos.x;
+                    verts[idx++] = p1->pos.y;
+                    verts[idx++] = p2->pos.x;
+                    verts[idx++] = p2->pos.y;
+                    verts[idx++] = p3->pos.x;
+                    verts[idx++] = p3->pos.y;
+                }
+
+                valid = 1;
+
+                if(p1->markRemove) {
+                    valid = 0;
+                }
+                if(p3->markRemove) {
+                    valid = 0;
+                }
+                if(p4->markRemove) {
+                    valid = 0;
+                }
+                
+                if(valid) {
+                    verts[idx++] = p1->pos.x;
+                    verts[idx++] = p1->pos.y;
+                    verts[idx++] = p3->pos.x;
+                    verts[idx++] = p3->pos.y;
+                    verts[idx++] = p4->pos.x;
+                    verts[idx++] = p4->pos.y;
+                }
+            }
         }
     }
 
-    lines[0] = idx - 1;
-    return int(lines);
+    verts[0] = idx - 1;
+    return int(verts);
 }
 
 // Point implementation
@@ -251,7 +300,8 @@ function void solveLink(Link *link) {
 }
 
 function void removeLink(Link *link) {
-    link->disabled = 1;
+    link->p1->markRemove = 1;
+    link->p2->markRemove = 1;
 }
 
 // Init
