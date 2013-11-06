@@ -70,8 +70,6 @@ GLRenderer.prototype.init = function(vertexSrc, fragmentSrc) {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     this.vertexBuffer = vertexBuffer;
 
-    this.colorBuffer = gl.createBuffer();
-
     // program
 
     function compile(shader, src) {
@@ -116,27 +114,6 @@ GLRenderer.prototype.init = function(vertexSrc, fragmentSrc) {
     this.isReady = true;
 };
 
-GLRenderer.prototype.createColors = function() {
-    var colors = [];
-    var dimen = this.clothW * this.clothH;
-    var gl = this.gl;
-
-    for(var i=0; i<dimen; i++) {
-        for(var j=0; j<6; j++) {
-            colors.push(i / dimen * .1 + .1);
-            colors.push(i / dimen * .3 + .1);
-            colors.push(i / dimen * .5 + .2);
-        }
-    }
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-    var loc = gl.getAttribLocation(this.program, 'a_color');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 3, gl.FLOAT, false, 0, 0);
-};
-
 GLRenderer.prototype.clear = function() {
     var gl = this.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -151,7 +128,6 @@ GLRenderer.prototype.render = function(points, w, h) {
     if(this.clothW != w || this.clothH != h) {
         this.clothW = w;
         this.clothH = h;
-        this.createColors();
     }
     
     var gl = this.gl;
@@ -160,5 +136,5 @@ GLRenderer.prototype.render = function(points, w, h) {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
-    gl.drawArrays(gl.TRIANGLES, 0, points.length / 2);
+    gl.drawArrays(gl.LINES, 0, points.length / 2);
 };

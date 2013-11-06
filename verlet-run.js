@@ -11,21 +11,20 @@ var requestAnimFrame = (function(){
 
 document.addEventListener('DOMContentLoaded', function() {
     canvas = document.createElement('canvas');
-    canvas.width = 1200;
-    canvas.height = 800;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     document.body.appendChild(canvas);
 
     var renderer = new GLRenderer(canvas);
     if(renderer.unsupported) {
-        renderer = new CanvasRenderer(canvas);
+        alert('WebGL is required and not supported on your system.');
     }
 
+    var cloth = window.verlet;
     var prevMouse = null;
     var running = false;
     var meshLevel = 5;
-    var meshSettled = true;
-    var meshLastChange = 0;
     var lastTime;
 
     function onInteract(x, y) {
@@ -35,10 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var mouse = [x - rect.left - scrollLeft, y - rect.top - scrollTop];
 
         if(prevMouse) {
-            window.verlet.mouseMove(mouse[0], mouse[1]);
+            cloth.mouseMove(mouse[0], mouse[1]);
         }
         else {
-            window.verlet.setMouse(mouse[0], mouse[1]);
+            cloth.setMouse(mouse[0], mouse[1]);
         }
 
         prevMouse = mouse;
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     canvas.onmouseup = function(e) {
         e.preventDefault();
-        window.verlet.setMouseButton(0);
+        cloth.setMouseButton(0);
     };
 
     canvas.onmouseleave = function(e) {
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     canvas.onmousedown = function(e) {
         e.preventDefault();
-        window.verlet.setMouseButton(e.button == 0 ? 1 : (e.button == 2) ? 2 : 0);
+        cloth.setMouseButton(e.button == 0 ? 1 : (e.button == 2) ? 2 : 0);
         return false;
     };
 
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.ontouchstart = function(e) {
         e.preventDefault();
 
-        window.verlet.setMouseButton(1);
+        cloth.setMouseButton(1);
     };
 
     canvas.ontouchmove = function(e) {
@@ -84,15 +83,15 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     document.onkeydown = function(e) {
-        var btn = window.verlet.getMouseButton();
+        var btn = cloth.getMouseButton();
 
         switch(e.keyCode) {
         case 81:
-            window.verlet.setMouseButton(btn == 1 ? 0 : 1); break;
+            cloth.setMouseButton(btn == 1 ? 0 : 1); break;
         case 65:
-            window.verlet.setMouseButton(btn == 2 ? 0 : 2); break;
+            cloth.setMouseButton(btn == 2 ? 0 : 2); break;
         default:
-            window.verlet.setMouseButton(0);
+            cloth.setMouseButton(0);
         }
     };
     
@@ -101,12 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setGravity() {
-        window.verlet.setGravity(980);
+        cloth.setGravity(980);
     }
 
     function start() {
         lastTime = Date.now();
-        meshLastChange = lastTime;
         running = true;
         requestAnimFrame(heartbeat);
     }
@@ -122,107 +120,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
         requestAnimFrame(heartbeat);
 
+        stats.begin();
         var now = currentTime();
         var dt = now - lastTime;
         lastTime = now;
 
-        // Require a minimum meshLevel of 5 because if the page is
-        // opened in a background tab it will not be run will think it
-        // has settled
-        if(!meshSettled && now - meshLastChange > 1000 && meshLevel > 5) {
-            meshSettled = true;
-            var msg = document.querySelector('.message');
-            msg.innerHTML = 'Done!';
-            msg.style.animationName = 'none';
-            msg.style.webkitAnimationName = 'none';
-            msg.style.backgroundColor = '#66df66';
-            msg.style.color = 'black';
-            msg.className = msg.className + ' disappear';
-
-            setTimeout(function() {
-                msg.style.display = 'none';
-            }, 3000);
-
-            window.verlet.setWind(0);
-            window.verlet.setMouseButton(0);
-            window.verlet.constructMesh(meshLevel);
-            
-            setGravity();
-        }
-        else if(!meshSettled) {
-            window.verlet.setMouseButton(1);
-            window.verlet.mouseMove(canvas.width / 2 + Math.random() * 100 - 50, 100);
-        }
-
         // update
 
-        window.verlet.update();
+        cloth.update();
 
         // render
 
-        var ptr = window.verlet.render();
+        var ptr = cloth.renderLines();
         var length = window.F4[ptr >> 2];
 
         var points = window.F4.subarray((ptr >> 2) + 1, (ptr >> 2) + length);
         renderer.render(points,
-                        window.verlet.getClothW(),
-                        window.verlet.getClothH());
+                        cloth.getClothW(),
+                        cloth.getClothH());
 
-        var after = currentTime();
-        if(after - now < 15 && !meshSettled) {
-            window.verlet.constructMesh(meshLevel++);
-            meshLastChange = after;
-
-            updateStatus(window.verlet.getClothW(), window.verlet.getClothH());
-        }
+        stats.end();
     }
 
-    // var gravity = document.querySelector('.controls .gravity input');
-    // gravity.checked = true;
-    // gravity.addEventListener('click', function() {
-    //     if(this.checked) {
-    //         setGravity();
-    //     }
-    //     else {
-    //         window.verlet.setGravity(0);
-    //     }
-    // });
+    cloth.main(canvas.width);
+    setGravity();
 
-    // var wind = document.querySelector('.controls .wind input');
-    // wind.checked = false;
-    // wind.addEventListener('click', function() {
-    //     if(this.checked) {
-    //         window.verlet.setWind(1);
-    //     }
-    //     else {
-    //         window.verlet.setWind(0);
-    //     }
-    // });
+    function updateSize(value) {
+        var output = document.querySelector('.sizer .output');
+        cloth.constructMesh(value);
+        output.innerHTML = cloth.getClothW() + 'x' + cloth.getClothH();
+    }
 
-    // var resetbtn = document.querySelector('.controls .reset button');
-    // resetbtn.addEventListener('click', function() {
-    //     window.verlet.constructMesh(meshLevel);
-    // });
-
-    var share = document.querySelector('.sidebar .share a');
-    share.addEventListener('click', function(e) {
-        e.preventDefault();
-        this.style.display = 'none';
-
-        document.querySelector('.sidebar .share-buttons').style.display = 'block';
-
-        var js, fjs = document.getElementsByTagName('script')[0];
-        if(document.getElementById('facebook-jssdk')) return;
-        js = document.createElement('script'); js.id = 'facebook-jssdk';
-        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=648899888459868";
-        fjs.parentNode.insertBefore(js, fjs);
+    var slider = document.querySelector('.sizer input[name=size]');
+    updateSize(slider.value);
+    slider.addEventListener('change', function() {
+        updateSize(slider.value);
     });
 
-    window.verlet.main(canvas.width);
-    window.verlet.constructMesh(300);
-    document.querySelector('.message').style.display = 'none';
-    window.verlet.setWind(0);
-    setGravity();
+    var els = Array.prototype.slice.call(document.querySelectorAll('.info'));
+    els.forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            document.querySelector('a.info').classList.toggle('closed');
+            document.querySelector('div.info').classList.toggle('closed');
+        });
+    });
+
+    var stats = new Stats();
+    stats.setMode(1); // 0: fps, 1: ms
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    document.body.appendChild(stats.domElement);
+
     start();
 });
 

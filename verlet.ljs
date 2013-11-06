@@ -82,6 +82,16 @@ function int min(int a, int b) {
     return b;
 }
 
+function int bounded(int n, int low, int high) {
+    if(n < low) {
+        return low;
+    }
+    else if(n > high) {
+        return high;
+    }
+    return n;
+}
+
 function float distPointToLine(float x, float y, Vec2d *p1, Vec2d *p2) {
     let Vec2d A;
     A.x = p1->x - x;
@@ -152,63 +162,26 @@ function void update() {
     }
 }
 
-function int render() {
+function int renderLines() {
     let float verts[2000000];
     let int idx = 1;
 
-    for(let int i=0; i<numPoints; i++) {
-        let int x = i % clothW;
-        let int y = i / clothW;
+    for(let int i=0; i<numLinks; i++) {
+        let int valid = 1;
 
-        if(x < clothW - 1) {
-            if(y < clothH - 1) {
-                let Point *p1 = &points[y * clothW + x];
-                let Point *p2 = &points[(y + 1) * clothW + x];
-                let Point *p3 = &points[(y + 1) * clothW + x + 1];
-                let Point *p4 = &points[y * clothW + x + 1];
-                let int valid = 1;
+        if(links[i].p1->markRemove) {
+            valid = 0;
+        }
 
-                // I really need to implement &&
-                if(p1->markRemove) {
-                    valid = 0;
-                }
-                if(p2->markRemove) {
-                    valid = 0;
-                }
-                if(p3->markRemove) {
-                    valid = 0;
-                }
+        if(links[i].p2->markRemove) {
+            valid = 0;
+        }
 
-                if(valid) {
-                    verts[idx++] = p1->pos.x;
-                    verts[idx++] = p1->pos.y;
-                    verts[idx++] = p2->pos.x;
-                    verts[idx++] = p2->pos.y;
-                    verts[idx++] = p3->pos.x;
-                    verts[idx++] = p3->pos.y;
-                }
-
-                valid = 1;
-
-                if(p1->markRemove) {
-                    valid = 0;
-                }
-                if(p3->markRemove) {
-                    valid = 0;
-                }
-                if(p4->markRemove) {
-                    valid = 0;
-                }
-                
-                if(valid) {
-                    verts[idx++] = p1->pos.x;
-                    verts[idx++] = p1->pos.y;
-                    verts[idx++] = p3->pos.x;
-                    verts[idx++] = p3->pos.y;
-                    verts[idx++] = p4->pos.x;
-                    verts[idx++] = p4->pos.y;
-                }
-            }
+        if(valid) {
+            verts[idx++] = links[i].p1->pos.x;
+            verts[idx++] = links[i].p1->pos.y;
+            verts[idx++] = links[i].p2->pos.x;
+            verts[idx++] = links[i].p2->pos.y;
         }
     }
 
@@ -229,8 +202,8 @@ function void updatePoint(Point *p, float dt) {
 
         if(mouseButton == 1) {
             if(dist < float(mouseInfluenceSize)) {
-                p->lastPos.x = p->pos.x - (mouse.x - prevMouse.x) * 1.8;
-                p->lastPos.y = p->pos.y - (mouse.y - prevMouse.y) * 1.8;
+                p->lastPos.x = p->pos.x - bounded((mouse.x - prevMouse.x) * 1.8, -30, 30);
+                p->lastPos.y = p->pos.y - bounded((mouse.y - prevMouse.y) * 1.8, -30, 30);
             }
         }
         else if(dist < float(mouseCut)) {

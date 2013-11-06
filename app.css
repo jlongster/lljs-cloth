@@ -1,15 +1,73 @@
 body {
-    background-color: white;
+    background-color: #004854;
     margin: 0;
 }
 
-a, a:active {
-    color: rgb(90, 150, 255);
+a, a:active, a:visited {
+    color: rgb(120, 255, 180);
     text-decoration: none;
 }
 
-a:visited {
-    color: rgb(70, 130, 225);
+.sizer {
+    position: absolute;
+    bottom: 0;
+    width: 500px;
+    left: calc(50% - 250px);
+    text-align: center;
+    color: white;
+}
+
+.sizer input {
+    width: 100%;
+}
+
+.sizer .output {
+    font-size: 5em;
+}
+
+.info {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: block;
+    margin: 1.5em;
+}
+
+.info.closed {
+    display: none;
+}
+
+.info span {
+    display: block;
+    text-align: right;
+    font-size: .75em;
+}
+
+div.info {
+    color: white;
+    width: 250px;
+    background-color: rgba(255, 255, 255, .2);
+    padding: 1em;
+}
+
+a.info {
+    color: #004854;
+    background-color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    padding-top: 12px;
+    line-height: 0;
+    opacity: .4;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+a.info:hover {
+    opacity: 1;
+    cursor: pointer;
 }
 
 canvas {
